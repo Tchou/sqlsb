@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title id="title-tag"></title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+</head>
+
+<body>
+
+    <div id="main">
+        <div id="left-panel">
+            <div id="db-selector-panel">
+                <select id="db-selector"></select>
+            </div>
+            <div id="table-panel"></div>
+        </div>
+        <div id="main-panel">
+            <div id="toolbar-panel">
+                <h1 id="page-title">@</h1>
+                <button id='execute-button' data-action="executeAction" title="@">▶️</button>
+                <span class="spacer"> </span>
+                <button id='export-db-button' data-action="exportDbAction" title="@">⬇</button>
+                <button id='export-history-button' data-action="exportHistoryAction" title="@">⬇</button>
+                <span class="filler"></span>
+                <a data-action="setLanguageAction" data-arg="EN" class='lang-link' href="javascript:;" title="Switch to English">EN</a><span>/</span><!--
+                --><a data-action="setLanguageAction" data-arg="FR" class='lang-link' href="javascript:;" title="Basculer en Français">FR</a>
+            </div>
+            <div id="editor-panel">
+                <div id="code-editor"></div>
+            </div>
+            <div id="output-panel">
+            </div>
+        </div>
+    </div>
+</body>
+<script src="./main.js"></script>
+</html>

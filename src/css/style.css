@@ -1,0 +1,87 @@
+body {
+    font-family: sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: var(--color-primary);
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+#code-editor {
+    font-family: var(--font-mono);
+    font-size: x-large;
+}
+
+.sql-code, .table-name {
+    font-family: var(--font-mono);
+    white-space: pre;
+}
+.sql-result {
+    font-family: var(--font-mono);
+}
+#output-panel .sql-code:hover, #table-panel a:hover {
+    color: white;
+    background: var(--color-primary);
+}
+
+#output-panel li {
+    margin-bottom:2em;
+}
+
+/*
+SELECT OUTPUT FORMATING.
+*/
+/* SELECT OUTPUT Table */
+.sql-result table {
+    border-collapse: collapse;
+}
+
+.sql-result table th,
+.sql-result table td {
+    text-align: center;
+    border: var(--table-border-style);
+}
+div.sql-result table td:first-child, 
+div.sql-result table th {
+    color:white;
+    background-color: var(--color-primary);
+}
+div.sql-result table.table-head {
+    background:white;
+}
+
+div.sql-result table th:first-child {
+    background-color: white;
+    border-style:none;
+}
+
+span.sql-code {
+    display: inline-block;
+}
+
+span.sql-code.multiline {
+    vertical-align: middle;
+}
+
+span.sql-result::before {
+    content: "  OK ✓";
+    color: var(--color-primary);
+    font-weight: bolder;
+}
+
+#toolbar-panel #page-title {
+    margin: 0 0 1vh;
+    font-family: var(--font-mono);
+    text-align: center;
+}
+
+#left-panel {
+    border-right: var(--table-border-style);
+}
+#output-panel {
+    border-top: var(--table-border-style);
+}
