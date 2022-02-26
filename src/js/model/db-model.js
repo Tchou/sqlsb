@@ -1,4 +1,4 @@
-const DB_WORKER_SCRIPT = "/db-worker.js";
+const DB_WORKER_SCRIPT = "db-worker.js";
 
 function postMessageAsync(worker, msg) {
     return new Promise((resolve, reject) => {
