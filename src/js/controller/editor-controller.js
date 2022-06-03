@@ -41,6 +41,12 @@ export class EditorController {
         this.outputClickHandler = null;
     }
 
+    async updateTables() {
+        const tables = await this.model.tables();
+        this.tableListView.setTables(tables);
+        setLanguage();
+    }
+
     async executeAction() {
         const session = this.editor.getSession();
         const sql = session.getValue();
@@ -53,11 +59,23 @@ export class EditorController {
             session.setValue("");
         }
         if (status.hasUpdate) {
-            const tables = await this.model.tables();
-            this.tableListView.setTables(tables);
+            this.updateTables();
+        } else {
+            setLanguage();
         }
-        setLanguage();
     }
+    async clearEditorAction() {
+        const session = this.editor.getSession();
+        if (session.getValue().trim().length > 0) {
+            if (!window.confirm(document.getElementById("confirm-dialog-message").innerHTML)) return;
+        }
+        session.setValue("");
+    }
+
+    async clearOutputAction() {
+        this.outputView.clear();
+    }
+
 
     setLanguageAction(lang) {
         setLanguage(lang);
@@ -72,7 +90,6 @@ export class EditorController {
         let sql = "";
         for (const s of this.model.history) {
             sql += appendSemi(s) + "\n";
-            console.log(s);
         }
         saveAs("code.sql", "application/sql", sql);
     }
@@ -81,10 +98,11 @@ export class EditorController {
         if (this.toolBarHandler != null) return;
         this.toolBarDom.addEventListener("click", this.toolBarHandler =
             (ev) => {
-                const elem = ev.target;
-                if ('action' in elem.dataset) {
-                    console.log(elem.dataset.action);
-                    this[elem.dataset.action](elem.dataset.arg);
+                for (const elem of [ev.target, ev.target.parentNode]) {
+                    if ('action' in elem.dataset) {
+                        this[elem.dataset.action](elem.dataset.arg);
+                        break;
+                    }
                 }
             });
     }
@@ -119,6 +137,14 @@ export class EditorController {
                         session.setValue(ev.target.innerText);
                         if (ev.ctrlKey) {
                             this.executeAction();
+                        }
+                    }
+                    else {
+                        for (const elem of [ev.target, ev.target.parentNode]) {
+                            if ('action' in elem.dataset) {
+                                this[elem.dataset.action](elem.dataset.arg);
+                                break;
+                            }
                         }
                     }
                 }

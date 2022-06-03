@@ -2,6 +2,8 @@
 export const LANGUAGES = ["EN", "FR"]
 
 const STR = [
+    [[],{}],
+
     [["#execute-button"], {
         "title": {
             "EN": "Run [Shift-Enter]",
@@ -20,6 +22,19 @@ const STR = [
             "FR": "Exporter l'historique de commandes SQL"
         }
     }],
+    [["#clear-editor-button"], {
+        "title": {
+            "EN" : "Clear editor",
+            "FR" : "Effacer l'éditeur"
+        }
+    }],
+    [["#clear-output-button"], {
+        "title": {
+            "EN" : "Clear output",
+            "FR" : "Effacer la sortie"
+        }
+    }],
+
     [["#page-title", "#title-tag"], {
         "innerHTML": {
             "EN": "SQL Sandbox",
@@ -50,6 +65,36 @@ const STR = [
             "FR": "TAILLE"
         }
     }],
+    [["#db-selector-text"], {
+        "innerHTML": {
+            "EN" : "Choose a database…",
+            "FR" : "Choisir une base de données…"
+        }
+    }],
+    [["#db-selector-from-db-file"], {
+        "innerHTML": {
+            "EN" : "&#x1F4D9; load a SQLite Database",
+            "FR" : "&#x1F4D9; charger une base SQLite"
+        }
+    }],
+    [["#db-selector-from-sql-file"], {
+        "innerHTML": {
+            "EN" : "&#x1F4C4; load a SQL file",
+            "FR" : "&#x1F4C4; charger un fichier SQL"
+        }
+    }],
+    [["#db-selector-example-label"], {
+        "innerHTML": {
+            "EN" : "Builtin examples…",
+            "FR" : "Exemples pré-définis…"
+        }
+    }],
+    [["#confirm-dialog-message"], {
+        "innerHTML": {
+            "EN" : "Do you wish to clear the current editor?",
+            "FR" : "Voulez vous effacer l'éditeur ?"
+        }
+    }]
 ];
 let LANG = null;
 (function () {

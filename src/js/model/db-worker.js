@@ -45,8 +45,6 @@ function runSQL(sql) {
         /**
          *  @type Error
          */
-        const e2 = e;
-        console.log(e2.name);
         results.push({
             success: false,
             error: e.message,
@@ -63,7 +61,7 @@ initSqlJs().then(SQL => {
         const msg = ev.data;
         switch (msg.type) {
             case "INIT":
-                self.postMessage({type : "INIT"});
+                self.postMessage({ type: "INIT" });
                 break;
 
             case "LOAD":
@@ -71,7 +69,7 @@ initSqlJs().then(SQL => {
                     db.close();
                 }
                 db = new SQL.Database(msg.data);
-                self.postMessage({ type : "LOADED"});
+                self.postMessage({ type: "LOADED" });
                 break;
 
             case "EXECUTE":

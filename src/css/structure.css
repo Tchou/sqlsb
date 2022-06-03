@@ -41,11 +41,12 @@ body {
 
 #main>#left-panel>#db-selector-panel {
     height: max-content;
-    padding: 0.25vh 0.5vw;
+    padding: 0.25vh 0vw;
+    width: 100%;
 }
 
 #main>#left-panel>#db-selector-panel>#db-selector {
-    width: 100%;
+    width:100%;
 }
 
 #main>#left-panel>#table-panel {
@@ -72,7 +73,7 @@ body {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: space-between;
+    align-items: center;
 }
 
 #main-panel>#toolbar-panel>h1 {
@@ -156,4 +157,12 @@ div.sql-result table.table-head {
 }
 div.sql-result table.table-body {
     z-index:0;
+}
+
+#hidden-file-selector {
+    display:none;
+}
+
+#confirm-dialog-message {
+    display:none;
 }

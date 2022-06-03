@@ -11,29 +11,34 @@
 
     <div id="main">
         <div id="left-panel">
-            <div id="db-selector-panel">
-                <select id="db-selector"></select>
-            </div>
+            <div id="db-selector-panel"></div>
             <div id="table-panel"></div>
         </div>
         <div id="main-panel">
             <div id="toolbar-panel">
                 <h1 id="page-title">@</h1>
-                <button id='execute-button' data-action="executeAction" title="@">▶️</button>
-                <span class="spacer"> </span>
-                <button id='export-db-button' data-action="exportDbAction" title="@">⬇</button>
-                <button id='export-history-button' data-action="exportHistoryAction" title="@">⬇</button>
-                <span class="filler"></span>
-                <a data-action="setLanguageAction" data-arg="EN" class='lang-link' href="javascript:;" title="Switch to English">EN</a><span>/</span><!--
+                <button class="action-button" id='execute-button' data-action="executeAction"
+                title="@"><img src='img/play.svg' alt=''/></button><!--
+                --><button class="action-button" id='export-db-button' data-action="exportDbAction"
+                title="@"><img src='img/dldb2.svg' alt=''/></button><!--
+                --><button class="action-button" id='export-history-button' data-action="exportHistoryAction"
+                 title="@"><img src='img/dlsql2.svg' alt=''/></button><!--
+                --><!--<button class="action-button" id='clear-editor-button' data-action="clearEditorAction"
+                title="@"><img src='img/bin.svg' alt=''/></button>--><!--
+                --><span class="filler"> </span><!--
+                --><a data-action="setLanguageAction" data-arg="EN" class='lang-link' href="javascript:;" title="Switch to English">EN</a><span>/</span><!--
                 --><a data-action="setLanguageAction" data-arg="FR" class='lang-link' href="javascript:;" title="Basculer en Français">FR</a>
             </div>
             <div id="editor-panel">
                 <div id="code-editor"></div>
             </div>
             <div id="output-panel">
+                <!--<button class="action-button" id='clear-output-button' data-action="clearOutputAction"
+                title="@"><img src='img/bin.svg' alt=''/></button>-->
             </div>
         </div>
     </div>
+    <div id="confirm-dialog-message"></div>
 </body>
 <script src="./main.js"></script>
 </html>

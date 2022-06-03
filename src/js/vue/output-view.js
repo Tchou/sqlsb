@@ -58,9 +58,13 @@ class OutputView {
         this.dom = document.getElementById(DOM_ID);
         if (this.dom == null) throw new Error(`{missing element '#${DOM_ID}}'`)
     }
-
+    clear() {
+        let ol = this.dom.querySelector("ol");
+        if (ol) {
+            this.dom.removeChild(ol);
+        }
+    }
     appendResults(results) {
-        console.log(results);
         let ol = this.dom.querySelector("ol");
         if (!ol) {
             ol = document.createElement("ol");
