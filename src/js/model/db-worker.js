@@ -4,12 +4,12 @@ import initSqlJs from 'sql.js/dist/sql-asm'
  * @type {SQL.Database}
  */
 let db = null;
-
+let running = false;
 /**
  * @param {SQL.StatementIterator } it
  * @param {SQL.Statement} stmt
 */
-function executeStatement(it, stmt) {
+function executeStatement(stmt) {
 
     const sql = stmt.getSQL();
     let next = stmt.step();
@@ -28,23 +28,29 @@ function executeStatement(it, stmt) {
     };
 
 }
+function pause() {
+    return new Promise(requestAnimationFrame);
+}
 
-function runSQL(sql) {
-    /**
-    @type SQL.StatementIterator
-    */
+async function runSQL(sql, noblock) {
+
     const it = db.iterateStatements(sql);
     const results = [];
+    let i = 0;
     try {
         for (const stmt of it) {
-            const res = executeStatement(it, stmt);
+            const res = executeStatement(stmt);
             results.push(res);
             if (!res.success) break;
+            if (!noblock && i++ % 5000 == 0) {
+                await pause();
+                if (!running) {
+                    throw { message: "#INTERRUPT#" }
+                }
+
+            }
         }
     } catch (e) {
-        /**
-         *  @type Error
-         */
         results.push({
             success: false,
             error: e.message,
@@ -54,9 +60,7 @@ function runSQL(sql) {
     return results;
 
 }
-
 initSqlJs().then(SQL => {
-
     self.addEventListener("message", (ev) => {
         const msg = ev.data;
         switch (msg.type) {
@@ -73,18 +77,30 @@ initSqlJs().then(SQL => {
                 break;
 
             case "EXECUTE":
-                self.postMessage({ type: "RESULTS", data: runSQL(msg.data) });
+                running = true;
+                runSQL(msg.data).then((data) => {
+                    running = false;
+                    self.postMessage({ type: "RESULTS", data });
+                });
                 break;
 
             case "TABLES":
-                let res = runSQL("SELECT name FROM sqlite_schema WHERE type='table' ORDER BY name;");
-                res = res[0];
-                self.postMessage({ type: "TABLES", data: res.values });
+                running = true;
+                runSQL("SELECT name FROM sqlite_schema WHERE type='table' ORDER BY name;", true)
+                    .then(res => {
+                        running = false;
+                        res = res[0];
+                        self.postMessage({ type: "TABLES", data: res.values });
+                    });
                 break;
 
             case "EXPORT":
                 const array = db.export();
                 self.postMessage({ type: "EXPORT", data: array }, [array.buffer]);
+                break;
+
+            case "INTERRUPT":
+                running = false;
                 break;
 
             default:

@@ -1,6 +1,8 @@
 import { setLanguage } from "../lang";
 
 const TOOLBAR_PANEL_ID = "toolbar-panel"
+const PLAY_BUTTON_ID = "execute-button"
+const STOP_BUTTON_ID = "stop-button"
 
 /**
  * @param {String} sql
@@ -36,28 +38,40 @@ export class EditorController {
         this.tableListView = tableListView;
         this.outputView = outputView;
         this.toolBarDom = document.getElementById(TOOLBAR_PANEL_ID);
+        this.playButton = document.getElementById(PLAY_BUTTON_ID);
+        this.stopButton = document.getElementById(STOP_BUTTON_ID);
+        this.stopButton.disabled = true;
         this.toolBarHandler = null;
         this.keyHandler = null;
         this.outputClickHandler = null;
     }
 
+    toggleButtons() {
+        this.stopButton.disabled = !this.stopButton.disabled;
+        this.playButton.disabled = !this.stopButton.disabled;
+    }
     async updateTables() {
         const tables = await this.model.tables();
         this.tableListView.setTables(tables);
         setLanguage();
     }
-
+    stopAction () {
+        this.model.interrupt();
+    }
     async executeAction() {
+        this.toggleButtons();
         const session = this.editor.getSession();
         const sql = session.getValue();
         const results = await this.model.evalSQL(sql);
+        this.toggleButtons();
         const status = this.outputView.appendResults(results);
         if (status.hasError) {
-            alert(status.error);
+            if (status.error != "#INTERRUPT#") alert(status.error);
             session.setValue(status.sql)
         } else {
             session.setValue("");
         }
+
         if (status.hasUpdate) {
             this.updateTables();
         } else {

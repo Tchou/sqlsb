@@ -159,10 +159,11 @@ div.sql-result table.table-body {
     z-index:0;
 }
 
-#hidden-file-selector {
+#file-selector {
     display:none;
 }
 
 #confirm-dialog-message {
     display:none;
 }
+

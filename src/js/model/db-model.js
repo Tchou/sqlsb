@@ -52,6 +52,12 @@ export class DbModel {
         return msg.data;
     }
 
+    async interrupt(){
+        await checkInit(this);
+        this.worker.postMessage({ type : "INTERRUPT" });
+        //assertMessage("INTERRUPTED", msg);
+    }
+
     async evalSQL(sql) {
         await checkInit(this);
         let msg = await postMessageAsync(this.worker, {

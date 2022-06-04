@@ -35,6 +35,7 @@ a:hover {
 
 #output-panel li {
     margin-bottom: 2em;
+    list-style-position: inside;
 }
 
 /*
@@ -117,6 +118,27 @@ span.sql-result::before {
 #toolbar-panel a:hover,
 #toolbar-panel input:hover {
     filter: var(--hl-filter);
+}
+
+button#stop-button:disabled,
+button#stop-button[disabled] {
+    animation: initial;
+}
+
+button#stop-button,
+button#stop-button {
+    animation: rotate 1.5s linear infinite;
+}
+
+@keyframes rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+button.action-button:disabled img,
+button.action-button[disabled] img {
+    filter: var(--disabled-filter);
 }
 
 #toolbar-panel input {

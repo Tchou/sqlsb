@@ -6,6 +6,44 @@ export class DbSelectorController {
         this.dbSelectorViewCallback = null;
     }
 
+    loadFile(kind) {
+        const that = this;
+        return new Promise((resolve, reject) => {
+            const fs = document.getElementById("file-selector");
+            fs.addEventListener("change", function cb(ev) {
+                const fileList = ev.target.files;
+                if (fileList.length >= 1) {
+                    const file = fileList.item(0);
+                    if (kind == "/DB/") {
+                        file.arrayBuffer().then(buf =>
+                            that.editorController.model.load(new Uint8Array(buf))
+                                .then(() => {
+                                    fs.removeEventListener("change", cb);
+                                    resolve();
+                                }));
+                    } else {
+                        file.text().then(txt => {
+                            that.editorController.editor.getSession().setValue(txt);
+                            fs.removeEventListener("change", cb);
+                            resolve();
+                        });
+                    }
+                } else {
+                    fs.removeEventListener("change", cb);
+                    resolve();
+                }
+
+            });
+            fs.click();
+        });
+
+    }
+    async loadFileAction(kind) {
+        this.dbSelectorView.resetEntry();
+        await this.loadFile(kind);     
+    }
+
+
     async loadExampleAction(id) {
         for (let [file, _, sql, db] of this.remoteExamples.entries) {
             if (file == id) {

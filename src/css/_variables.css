@@ -7,6 +7,7 @@
     --color-widget-bg: #e0e0e0;
     --color-important: #fdb2a9;
     --hl-filter: brightness(120%) contrast(110%);
+    --disabled-filter:saturate(10%);
     --font-mono: 'Roboto Mono', monospace;
     --left-panel-width: 20%;
     --main-panel-width: calc(100% - var(--left-panel-width));

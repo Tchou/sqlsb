@@ -5,8 +5,8 @@ let instance = null;
 const BUILTIN_ENTRIES = [{
     id: "db-selector-text", selected: "true", disabled: "disabled"
 },
-{ id: "db-selector-from-db-file", value: "/DB/" },
-{ id: "db-selector-from-sql-file", value: "/SQL/" },
+{ id: "db-selector-from-db-file", value: "/DB/", "data-action" : "loadFileAction" },
+{ id: "db-selector-from-sql-file", value: "/SQL/", "data-action" : "loadFileAction" },
 { id: "db-selector-example-label", disabled: "disabled" },
 ];
 
@@ -24,13 +24,21 @@ class DbSelectorView {
             this.builtins[entry.id] = true;
             const o = document.createElement("option");
             for (let p in entry) {
-                o[p] = entry[p];
+                let fields = p.split("-");
+                if (fields[0] == "data") {
+                    o.dataset[fields[1]] = entry[p];
+                } else {
+                    o[p] = entry[p];
+                }
             }
             select.appendChild(o);
         }
         this.select = select;
     }
 
+    resetEntry() {
+        document.getElementById("db-selector-text").selected = true;
+    }
     setEntries(entries) {
         this.entries = entries;
         this.render();
