@@ -48,6 +48,9 @@ body {
 #main>#left-panel>#db-selector-panel>#db-selector {
     width:100%;
 }
+#main>#left-panel>#db-selector-panel>#db-selector > option {
+    white-space: pre;
+}
 
 #main>#left-panel>#table-panel {
     flex:1;

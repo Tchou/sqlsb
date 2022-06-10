@@ -1,0 +1,34 @@
+[
+    "  Exemples MPI/MP2I",
+    {
+        "label": "Base de données des Films (Exemples)",
+        "db_file": "films.db",
+        "sql_file": "films.sql"
+    },
+    {
+        "label": "Base de données des Films (Exercices)",
+        "db_file": "films.db",
+        "sql_file": "films_exo.sql"
+    },
+    {
+        "label": "Base de données des Films (Solutions)",
+        "db_file": "films.db",
+        "sql_file": "films_ans.sql"
+    },
+    "Exemples NSI Terminale",
+    {
+        "label": "Base de données Médiathèque (Exemples)",
+        "db_file": "media.db",
+        "sql_file": "media.sql"
+    },
+    {
+        "label": "Base de données des Médiathèque (Exercices)",
+        "db_file": "media.db",
+        "sql_file": "media_exo.sql"
+    },
+    {
+        "label": "Base de données des Médiathèque (Exercices)",
+        "db_file": "media.db",
+        "sql_file": "media_ans.sql"
+    }
+]

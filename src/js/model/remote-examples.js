@@ -1,14 +1,14 @@
 
 
-async function fromURL(file, name, baseURL) {
+async function fromURL(id,dbfile, sqlfile, label, baseURL) {
     try {
-        const content = [Promise.resolve(file),
-        Promise.resolve(name),
-        (await window.fetch(`${baseURL}/${file}.sql`)).text(),
-        (await window.fetch(`${baseURL}/${file}.db`)).arrayBuffer()];
+        const content = [Promise.resolve(id + ""),
+        Promise.resolve(label),
+        (await window.fetch(`${baseURL}/${sqlfile}`)).text(),
+        (await window.fetch(`${baseURL}/${dbfile}`)).arrayBuffer()];
         const result = await Promise.all(content);
         return result;
-    } catch {
+    } catch (e){
         return null;
     }
 }
@@ -21,15 +21,20 @@ class RemoteExamples {
 
     async load(url) {
         if (!url) return;
-        const res = await fetch(url + "/index.txt");
-        const text = await res.text();
+        const res = await fetch(url + "/index.json");
+        const json = await res.json();
+        if (!Array.isArray(json)) return;
         const entries = [];
-        for (const name of text.split('\n')) {
-            const fields = name.split(':');
-            if (fields.length != 2) continue;
-            const [label, file] = fields;
-            const entry = fromURL(file, label, url);
-            if (entry) entries.push(entry);
+        let id = 0;
+        for (const entry of json) {
+            if (typeof entry == "string") {
+                entries.push(Promise.resolve(entry));
+            } if (entry.hasOwnProperty("label") &&
+                entry.hasOwnProperty("sql_file") &&
+                entry.hasOwnProperty("db_file")) {
+                const res = fromURL(id++, entry.db_file, entry.sql_file, entry.label, url);
+                if (res) entries.push(res);
+            }
         }
         this.entries = await Promise.all(entries);
     }

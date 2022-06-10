@@ -5,8 +5,8 @@ let instance = null;
 const BUILTIN_ENTRIES = [{
     id: "db-selector-text", selected: "true", disabled: "disabled"
 },
-{ id: "db-selector-from-db-file", value: "/DB/", "data-action" : "loadFileAction" },
-{ id: "db-selector-from-sql-file", value: "/SQL/", "data-action" : "loadFileAction" },
+{ id: "db-selector-from-db-file", value: "/DB/", "data-action": "loadFileAction" },
+{ id: "db-selector-from-sql-file", value: "/SQL/", "data-action": "loadFileAction" },
 { id: "db-selector-example-label", disabled: "disabled" },
 ];
 
@@ -45,7 +45,7 @@ class DbSelectorView {
     }
 
     selectByName(n) {
-        for(let opt of this.select.options) {
+        for (let opt of this.select.options) {
             if (opt.textContent == n) {
                 opt.selected = "selected";
                 break;
@@ -60,10 +60,16 @@ class DbSelectorView {
         }
         for (let entry of this.entries) {
             const opt = document.createElement("option");
-            opt.value = entry[0];
-            opt.text = entry[1];
-            opt.dataset.action = "loadExampleAction";
+            if (typeof (entry) === "string") {
+                opt.innerHTML = "&nbsp;&nbsp;" + entry;
+                opt.disabled = true;
+            } else {
+                opt.value = entry[0];
+                opt.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;" + entry[1];
+                opt.dataset.action = "loadExampleAction";
+            }
             this.select.appendChild(opt);
+
         }
 
 
