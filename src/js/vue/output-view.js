@@ -28,9 +28,23 @@ const renderResult = (result, ol) => {
     let output = document.createElement("span");
     output.classList.add("sql-result");
     li.appendChild(output);
+    let latex = "";
 
     if (result.kind == "query") {
-
+        latex += "\\begin{tabular}{";
+        for (let i = 0; i < result.schema.length; i++) {
+            latex+= "|>{\\tt}c"
+        }
+        latex += "|}\n\\THEAD\n";
+        for (let i = 0; i < result.schema.length; i++) {
+            latex+= "\\FtblH{\\textit{" + result.schema[i] + "}}" +
+             ((i == result.schema.length - 1) ? "\\\\[-0.5mm]\n" : "&\n");
+        }
+        for (let i = 0; i < result.schema.length; i++) {
+            latex+= "\\FtblH{\\texttt{type}}" +
+             ((i == result.schema.length - 1) ? "\\\\\n" : "&\n");
+        }
+        latex += "\\TSKIP{" + result.schema.length + "}\n\\hline\n";
         output = document.createElement("div");
         const table_head = document.createElement("table");
         table_head.classList.add("table-head");
@@ -40,10 +54,17 @@ const renderResult = (result, ol) => {
         output.appendChild(table_body);
         appendRow(table_head, "th", result.schema, "");
         for (const [i, row] of result.values.entries()) {
-            appendRow(table_body, "td", row, i)
+            appendRow(table_body, "td", row, i);
+            for (let j = 0; j < row.length; j++) {
+                latex += row[j] + 
+                ((j == row.length - 1) ? "\\\\\n" : "&\n");
+            }
+            latex += "\\hline\n"
         }
+        latex += "\\end{tabular}\n"
         output.classList.add("sql-result");
         li.appendChild(output);
+        console.log(latex);
     } else {
         hasUpdate = true;
     }

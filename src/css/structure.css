@@ -170,3 +170,8 @@ div.sql-result table.table-body {
     display:none;
 }
 
+.latex-code {
+    z-index:1000;
+    font-family: sans-serif;
+    white-space: pre;
+}

@@ -33,7 +33,7 @@ function init() {
         const outputView = OutputView.getInstance();
         setLanguage();
 
-        const tableListController = new TableListController(model, outputView);
+        const tableListController = new TableListController(model, outputView,tableListView);
         const editorController = new EditorController(model, editor, tableListView, outputView);
         const dbSelectorController = new DbSelectorController(remoteExamples, dbSelectorView, editorController);
         tableListController.register();

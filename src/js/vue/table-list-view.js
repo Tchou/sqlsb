@@ -32,6 +32,9 @@ class TableListView {
                 <li><a class='table-count-link'
                        href='javascript:;' data-name='${name}'
                        data-action='COUNT'></a></li>
+                <li><a class='table-drop-link'
+                       href='javascript:;' data-name='${name}'
+                       data-action='DROP'></a></li>
             </ul>`
 
         }

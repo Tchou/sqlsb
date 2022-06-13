@@ -86,7 +86,7 @@ initSqlJs().then(SQL => {
 
             case "TABLES":
                 running = true;
-                runSQL("SELECT name FROM sqlite_schema WHERE type='table' ORDER BY name;", true)
+                runSQL("SELECT name FROM sqlite_schema WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;", true)
                     .then(res => {
                         running = false;
                         res = res[0];

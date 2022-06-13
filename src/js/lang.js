@@ -53,6 +53,12 @@ const STR = [
             "FR": "SCHÉMA"
         }
     }],
+    [[".table-drop-link"], {
+        "innerHTML": {
+            "EN": "DROP",
+            "FR": "SUPPRIMER"
+        }
+    }],
     [["#output-panel .sql-code"], {
         "title" : {
             "EN" : "Copy to editor [click]/Execute [Ctrl-click]",
