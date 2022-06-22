@@ -73,6 +73,7 @@ initSqlJs().then(SQL => {
                     db.close();
                 }
                 db = new SQL.Database(msg.data);
+                db.create_function("MOD", (x, y) => x % y);
                 self.postMessage({ type: "LOADED" });
                 break;
 
