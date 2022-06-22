@@ -15,6 +15,6 @@
         "label": "Base de données Médiathèque (Exemples)",
         "db_file": "media.db",
         "sql_file": "media.sql"
-    },
+    }
 
 ]
