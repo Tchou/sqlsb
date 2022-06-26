@@ -5,6 +5,7 @@ let instance = null;
 const BUILTIN_ENTRIES = [{
     id: "db-selector-text", selected: "true", disabled: "disabled"
 },
+{ id: "db-selector-new", value: "/NEW/", "data-action": "loadNewAction" },
 { id: "db-selector-from-db-file", value: "/DB/", "data-action": "loadFileAction" },
 { id: "db-selector-from-sql-file", value: "/SQL/", "data-action": "loadFileAction" },
 { id: "db-selector-example-label", disabled: "disabled" },

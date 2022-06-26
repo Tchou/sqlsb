@@ -77,6 +77,12 @@ const STR = [
             "FR" : "Choisir une base de données…"
         }
     }],
+    [["#db-selector-new"], {
+        "innerHTML": {
+            "EN" : "&#x2B50; New database",
+            "FR" : "&#x2B50; Nouvelle base de données"
+        }
+    }],
     [["#db-selector-from-db-file"], {
         "innerHTML": {
             "EN" : "&#x1F4D9; load a SQLite Database",

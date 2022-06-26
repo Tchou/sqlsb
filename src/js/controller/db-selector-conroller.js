@@ -38,18 +38,32 @@ export class DbSelectorController {
         });
 
     }
+
+    async resetView() {
+        await this.editorController.updateTables();
+        this.editorController.model.clearHistory();
+        this.editorController.outputView.clear();
+    }
     async loadFileAction(kind) {
+        await this.loadFile(kind);
+        await this.resetView();
         this.dbSelectorView.resetEntry();
-        await this.loadFile(kind);     
     }
 
+    async loadNewAction() {
+        this.editorController.editor.getSession().setValue("");
+        await this.editorController.model.load(new Uint8Array());
+        await this.resetView();
+        this.dbSelectorView.resetEntry();
+    }
 
     async loadExampleAction(id) {
         for (let [file, _, sql, db] of this.remoteExamples.entries) {
             if (file == id) {
-                await this.editorController.model.load(new Uint8Array(db));
-                await this.editorController.updateTables();
                 this.editorController.editor.getSession().setValue(sql);
+                await this.editorController.model.load(new Uint8Array(db));
+                await this.resetView();
+                this.dbSelectorView.resetEntry();
                 break;
             }
         }
