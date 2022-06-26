@@ -6,6 +6,11 @@
         "sql_file": "films.sql"
     },
     {
+        "label": "Base de données D1 Foot Féminin (Exercices)",
+        "db_file": "foot.db",
+        "sql_file": "foot.sql"
+    },
+    {
         "label": "Base de données des Étudiants (Exercices)",
         "db_file": "etudiants.db",
         "sql_file": "etudiants.sql"
