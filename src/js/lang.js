@@ -104,8 +104,14 @@ const STR = [
 ];
 let LANG = null;
 (function () {
-    let ln = navigator.language || "en";
+    let ln = "EN";
+    if (navigator.languages && navigator.languages.length) {
+        ln = navigator.languages[0];
+    } else if (navigator.language) {
+        ln = navigator.language;
+    }
     ln = ln.split("-")[0].toLocaleUpperCase();
+    if (LANGUAGES.indexOf(ln) < 0) ln = "EN";
     LANG = ln;
 })();
 
@@ -126,3 +132,4 @@ export function setLanguage(lang) {
         }
     }
 }
+setLanguage();
