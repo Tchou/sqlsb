@@ -64,7 +64,7 @@ const renderResult = (result, ol) => {
         latex += "\\end{tabular}\n"
         output.classList.add("sql-result");
         li.appendChild(output);
-        console.log(latex);
+        //console.log(latex);
     } else {
         hasUpdate = true;
     }
