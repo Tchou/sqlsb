@@ -3,6 +3,28 @@ body {
     margin: 0;
 }
 
+#github-banner-container {
+    position:fixed;
+    bottom:0;
+    left:0;
+    
+}
+a#github-banner {
+    background-color: var(--color-primary);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    width:10em;
+    text-align: center;
+    transform: translate(0,-7em) rotate(45deg);
+    transform-origin: bottom left;
+    
+    display:inline-block;
+}
+
+a#github-banner:hover {
+    filter: var(--hl-filter);
+}
 /** main container
     divided in two parts (horizontal):
     - Left panel contains two elements (vertical) :
