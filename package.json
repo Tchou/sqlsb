@@ -19,10 +19,10 @@
   },
   "homepage": "https://github.com/Tchou/sqlsb#readme",
   "devDependencies": {
-    "ace-builds": "^1.4.14",
+    "ace-builds": "^1.6.1",
     "copy-webpack-plugin": "^10.2.4",
     "npm-run-all": "^4.1.5",
-    "sql.js": "^1.6.2",
+    "sql.js": "^1.7.0",
     "webpack": "^5.69.1",
     "webpack-cli": "^4.9.2"
   }
