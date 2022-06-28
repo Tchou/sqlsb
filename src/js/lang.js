@@ -34,7 +34,12 @@ const STR = [
             "FR" : "Effacer la sortie"
         }
     }],
-
+    [["#resize-panel"], {
+        "title" : {
+            "EN" : "Drag to resize",
+            "FR" : "Redimentionner"
+        }
+    }],
     [["#page-title", "#title-tag"], {
         "innerHTML": {
             "EN": "SQL Sandbox",

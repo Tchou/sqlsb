@@ -3,6 +3,8 @@ import { setLanguage } from "../lang";
 const TOOLBAR_PANEL_ID = "toolbar-panel"
 const PLAY_BUTTON_ID = "execute-button"
 const STOP_BUTTON_ID = "stop-button"
+const RESIZE_PANEL_ID = "resize-panel"
+const EDITOR_PANEL_ID = "editor-panel"
 
 /**
  * @param {String} sql
@@ -40,10 +42,13 @@ export class EditorController {
         this.toolBarDom = document.getElementById(TOOLBAR_PANEL_ID);
         this.playButton = document.getElementById(PLAY_BUTTON_ID);
         this.stopButton = document.getElementById(STOP_BUTTON_ID);
+        this.resizePanel = document.getElementById(RESIZE_PANEL_ID);
+        this.editorPanel = document.getElementById(EDITOR_PANEL_ID);
         this.stopButton.disabled = true;
         this.toolBarHandler = null;
         this.keyHandler = null;
         this.outputClickHandler = null;
+        this.resizeHandler = null;
     }
 
     toggleButtons() {
@@ -173,14 +178,50 @@ export class EditorController {
 
     }
 
+    registerResize () {
+        if (this.resizeHandler == null) {
+            let initY = -1;
+            let initHeight = -1;
+            this.resizeHandler = {}
+            this.resizeHandler["mousedown"] = (e) => {
+                if (e.target != this.resizePanel) return;
+                initY = e.screenY;
+                initHeight = this.editorPanel.offsetHeight;
+            };
+            this.resizeHandler["mouseup"] = (e) => {
+                if (initY == -1) return;
+                initY = -1;
+                initHeight = -1;
+            }
+            this.resizeHandler["mousemove"] = (e) => {
+                if (initY == -1) return;
+                let delta = initY - e.screenY;
+                this.editorPanel.style.height = (initHeight - delta) + "px";
+            };
+            for(let evname of Object.keys(this.resizeHandler)) {
+                document.addEventListener(evname, this.resizeHandler[evname]);
+            }
+        }
+    }
+    unregisterResize() {
+        if (this.resizeHandler != null) {
+            for(let evname of Object.keys(this.resizeHandler)) {
+                document.removeEventListener(evname, this.resizeHandler[evname]);
+            }
+        }
+    }
     register() {
         this.registerToolbar();
         this.registerKey();
         this.registerOutput();
+        this.registerResize();
+        
     }
+
     unregister() {
         this.unregisterToolBar();
         this.unregisterKey();
         this.unregisterOutput();
+        this.unregisterResize();
     }
 }
