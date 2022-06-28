@@ -111,6 +111,12 @@ const STR = [
             "EN" : "Do you wish to clear the current editor?",
             "FR" : "Voulez vous effacer l'éditeur ?"
         }
+    }],
+    [["#github-banner"], {
+        "innerHTML" : {
+            "EN" : "See on GitHub",
+            "FR" : "Voir sur GitHub"
+        }
     }]
 ];
 let LANG = null;
