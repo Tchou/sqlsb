@@ -8,9 +8,10 @@ body {
     - Left panel contains two elements (vertical) :
        * db selector
        * table view
-    - Main panel contains three elements (vertical) :
+    - Main panel contains four elements (vertical) :
       * toolbar
       * ace-editor
+      * resize bar
       * output
 */
 
@@ -113,6 +114,16 @@ body {
     position: absolute;
     width: 100%;
     height: 100%;
+}
+
+#main-panel >#resize-panel {
+    position:relative;
+    width:100%;
+    height: var(--table-border-width);
+    background-color: var(--color-primary);
+}
+#main-panel > #resize-panel:hover {
+    cursor: row-resize;
 }
 
 #main-panel>#output-panel {
