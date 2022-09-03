@@ -134,10 +134,15 @@ let LANG = null;
 
 
 export function setLanguage(lang) {
-    if (typeof lang === "undefined") {
+    if (typeof lang === "undefined" || lang === null) {
         lang = LANG;
     } else {
-        LANG = lang;
+        lang = lang.toLocaleUpperCase();
+        if (LANGUAGES.indexOf(lang) < 0) {
+            lang = LANG;
+        } else {
+            LANG = lang;
+        }
     }
     for (const [ids, msgs] of STR) {
         for (const id of ids) {

@@ -31,8 +31,8 @@ function init() {
         dbSelectorView.setEntries(remoteExamples.entries);
         const tableListView = TableListView.getInstance();
         const outputView = OutputView.getInstance();
-        setLanguage();
-
+        const paramLang = (new URLSearchParams(window.location.search)).get("lang");
+        setLanguage(paramLang);
         const tableListController = new TableListController(model, outputView,tableListView);
         const editorController = new EditorController(model, editor, tableListView, outputView);
         const dbSelectorController = new DbSelectorController(remoteExamples, dbSelectorView, editorController);
