@@ -28,9 +28,11 @@ function executeStatement(stmt) {
     };
 
 }
-function pause() {
-    return new Promise(requestAnimationFrame);
-}
+let pause = null;
+if (typeof globalThis.requestAnimationFrame == "function")
+    pause = () => new Promise(globalThis.requestAnimationFrame);
+else
+    pause = () => new Promise((ok)=>setTimeout(ok,100));
 
 async function runSQL(sql, noblock) {
 
