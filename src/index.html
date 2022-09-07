@@ -48,6 +48,12 @@
     <div id="confirm-dialog-message"></div>
     <input type="file" id="file-selector"></input>
 </body>
+<script>
+if (typeof globalThis == "undefined")
+        globalThis = window;
+globalThis.dbUrl = "db/";
+globalThis.workerUrl = "./";
+</script>
 <script>/* INLINE 'db/index.json' */</script>
 <script>/* INLINE 'db-worker.js' */</script>
 <script src="./main.js"></script>

@@ -78,6 +78,7 @@ function inlineDbInHTML (file, frest) {
         let indexFile = path.join(path.dirname(fpath), match[1]);
         let txt = fs.readFileSync(indexFile, {encoding:'utf-8'});
         frest(`<script>
+globalThis.dbUrl = "builtin://DATA";
 globalThis.DATA = {};
 globalThis.DATA["${path.basename(match[1])}"] = ${JSON.stringify(txt)};\n`);
         const json = JSON.parse(txt);
@@ -102,6 +103,7 @@ function inlineWorkerInHTML (file, frest) {
         let jsFile = path.join(path.dirname(fpath), match[1]);
         let txt = fs.readFileSync(jsFile, {encoding:'utf-8'});
         frest(`<script>
+globalThis.workerUrl = "builtin://DATA";
 globalThis.DATA["${match[1]}"] = ${JSON.stringify(txt)};\n</script>\n`);
     }, frest);
 }
