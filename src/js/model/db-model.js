@@ -1,4 +1,6 @@
-const DB_WORKER_SCRIPT = './db-worker.js';
+import { customFetch } from "./local_fetch";
+
+const DB_WORKER_SCRIPT = 'db-worker.js';
 
 function postMessageAsync(worker, msg) {
     return new Promise((resolve, reject) => {
@@ -22,6 +24,10 @@ function assertMessage(exp, msg) {
 
 async function checkInit(o) {
     if (o.initialized) return;
+    const scriptP = await o.workerP;
+    const code = await scriptP.text();
+    const blob = new Blob([code]);
+    o.worker = new Worker (URL.createObjectURL(blob));
     const msg = await postMessageAsync(o.worker, { type: "INIT" });
     assertMessage("INIT", msg);
     o.initialized = true;
@@ -29,8 +35,15 @@ async function checkInit(o) {
 
 export class DbModel {
 
-    constructor() {
-        this.worker = new Worker(DB_WORKER_SCRIPT);
+    constructor(baseURL) {
+        let url = "";
+        if (baseURL) {
+            url = baseURL + "/" + DB_WORKER_SCRIPT;
+        } else {
+            url = DB_WORKER_SCRIPT;
+        }
+        this.workerP = customFetch(url);
+        this.worker = null;
         this.__history = [];
     }
 
@@ -49,7 +62,9 @@ export class DbModel {
             type: "TABLES"
         });
         assertMessage("TABLES", msg);
-        return msg.data;
+        let res = [];
+        if (Array.isArray(msg.data)) res = msg.data;
+        return res;
     }
 
     async interrupt(){

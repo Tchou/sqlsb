@@ -21,11 +21,11 @@ function init() {
     editor.session.setMode('ace/mode/sql');
     editor.setTheme('ace/theme/xcode');
 
-
-    const model = new DbModel();
+    const model = new DbModel("builtin://DATA");
     const remoteExamples = RemoteExamples.getInstance();
     Promise.all([model.load(),
-    remoteExamples.load("db/")
+    //remoteExamples.load("db/")
+    remoteExamples.load("builtin://DATA")
     ]).then(() => {
         const dbSelectorView = DbSelectorView.getInstance();
         dbSelectorView.setEntries(remoteExamples.entries);

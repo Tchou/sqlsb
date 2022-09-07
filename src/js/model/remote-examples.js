@@ -1,14 +1,16 @@
+import {customFetch} from './local_fetch'
 
 
 async function fromURL(id,dbfile, sqlfile, label, baseURL) {
     try {
         const content = [Promise.resolve(id + ""),
         Promise.resolve(label),
-        (await window.fetch(`${baseURL}/${sqlfile}`)).text(),
-        (await window.fetch(`${baseURL}/${dbfile}`)).arrayBuffer()];
+        (await customFetch(`${baseURL}/${sqlfile}`)).text(),
+        (await customFetch(`${baseURL}/${dbfile}`)).arrayBuffer()];
         const result = await Promise.all(content);
         return result;
     } catch (e){
+        console.log(e.toString());
         return null;
     }
 }
@@ -21,7 +23,8 @@ class RemoteExamples {
 
     async load(url) {
         if (!url) return;
-        const res = await fetch(url + "/index.json");
+        if (url.endsWith("/")) url = url.slice(0, -1);
+        const res = await customFetch(url + "/index.json");
         const json = await res.json();
         if (!Array.isArray(json)) return;
         const entries = [];

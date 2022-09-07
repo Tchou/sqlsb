@@ -8,7 +8,7 @@
     --color-important: #fdb2a9;
     --hl-filter: brightness(120%) contrast(110%);
     --disabled-filter:saturate(10%);
-    --font-mono: 'Roboto Mono', monospace;
+    --font-mono: monospace;
     --left-panel-width: 20%;
     --main-panel-width: calc(100% - var(--left-panel-width));
     --table-border-width: 0.15em;
