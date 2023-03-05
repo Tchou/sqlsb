@@ -14,7 +14,7 @@ import * as DbSelectorView from './vue/db-selector-view'
 
 import { TableListController } from './controller/table-list-controller'
 import { EditorController } from './controller/editor-controller'
-import { DbSelectorController } from './controller/db-selector-conroller'
+import { DbSelectorController } from './controller/db-selector-controller'
 
 function init() {
     const editor = ace.edit('code-editor');
