@@ -1,0 +1,16 @@
+:root {
+    --color-deepcyan: #008080;
+    --color-medcyan: #00a0a0a0;
+    --color-cyan: #00ffff;
+    --color-lightcyan: #b3ffff;
+    --color-primary: var(--color-deepcyan);
+    --color-widget-bg: #e0e0e0;
+    --color-important: #fdb2a9;
+    --hl-filter: brightness(120%) contrast(110%);
+    --disabled-filter:saturate(10%);
+    --font-mono: monospace;
+    --left-panel-width: 20%;
+    --main-panel-width: calc(100% - var(--left-panel-width));
+    --table-border-width: 0.15em;
+    --table-border-style: var(--table-border-width) var(--color-primary) solid;
+}
