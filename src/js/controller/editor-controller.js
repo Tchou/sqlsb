@@ -49,6 +49,7 @@ export class EditorController {
         this.keyHandler = null;
         this.outputClickHandler = null;
         this.resizeHandler = null;
+        this.historyPosition = -1;
     }
 
     toggleButtons() {
@@ -60,11 +61,12 @@ export class EditorController {
         this.tableListView.setTables(tables);
         setLanguage();
     }
-    stopAction () {
+    stopAction() {
         this.model.interrupt();
     }
     async executeAction() {
         this.toggleButtons();
+        this.historyPosition = -1;
         const session = this.editor.getSession();
         const sql = session.getValue();
         const results = await this.model.evalSQL(sql);
@@ -82,6 +84,7 @@ export class EditorController {
         } else {
             setLanguage();
         }
+        this.editor.focus();
     }
     async clearEditorAction() {
         const session = this.editor.getSession();
@@ -89,6 +92,8 @@ export class EditorController {
             if (!window.confirm(document.getElementById("confirm-dialog-message").innerHTML)) return;
         }
         session.setValue("");
+        this.historyPosition = -1;
+        this.editor.focus();
     }
 
     async clearOutputAction() {
@@ -132,19 +137,54 @@ export class EditorController {
         this.toolBarHandler = null;
     }
 
+    navigateHistory(dir) {
+        const history = Array.from(this.model.history);
+        if (history.length == 0) return;
+        const session = this.editor.getSession();
+        if (this.historyPosition < 0) {
+            if (session.getValue() == "") {
+                this.historyPosition = history.length;
+            } else {
+                return;
+            }
+        } else {
+            if (history[this.historyPosition] != session.getValue()) return;
+        };
+        const newPosition = this.historyPosition + dir;
+        if (newPosition < 0 || newPosition >= history.length) {
+            return;
+        }
+        const text = history[newPosition];
+        session.setValue(text);
+        this.historyPosition = newPosition;
+    }
+
+
+
     registerKey() {
         if (this.keyHandler != null) return;
-        window.addEventListener("keypress", this.keyHandler = (ev) => {
+        window.document.body.addEventListener("keydown", this.keyHandler = (ev) => {
             if (ev.key == "Enter" && ev.shiftKey) {
-                ev.preventDefault();
                 this.executeAction();
+                ev.preventDefault();
+                ev.stopPropagation();
+            } else if (ev.key == "ArrowUp" && ev.shiftKey && ev.ctrlKey) {
+                this.navigateHistory(-1);
+                ev.preventDefault();
+                ev.stopPropagation();
+            } else if (ev.key == "ArrowDown" && ev.shiftKey && ev.ctrlKey) {
+                this.navigateHistory(1);
+                ev.preventDefault();
+                ev.stopPropagation();
             }
-        });
+        }, true);
     }
+
     unregisterKey() {
         if (this.keyHandler == null) return;
         window.removeEventListener("keypress", this.keyHandler);
         this.keyHandler = null;
+
     }
 
     registerOutput() {
@@ -166,6 +206,7 @@ export class EditorController {
                             }
                         }
                     }
+                    this.editor.focus();
                 }
             );
         }
@@ -178,7 +219,7 @@ export class EditorController {
 
     }
 
-    registerResize () {
+    registerResize() {
         if (this.resizeHandler == null) {
             let initY = -1;
             let initHeight = -1;
@@ -198,14 +239,14 @@ export class EditorController {
                 let delta = initY - e.screenY;
                 this.editorPanel.style.height = (initHeight - delta) + "px";
             };
-            for(let evname of Object.keys(this.resizeHandler)) {
+            for (let evname of Object.keys(this.resizeHandler)) {
                 document.addEventListener(evname, this.resizeHandler[evname]);
             }
         }
     }
     unregisterResize() {
         if (this.resizeHandler != null) {
-            for(let evname of Object.keys(this.resizeHandler)) {
+            for (let evname of Object.keys(this.resizeHandler)) {
                 document.removeEventListener(evname, this.resizeHandler[evname]);
             }
         }
@@ -215,7 +256,7 @@ export class EditorController {
         this.registerKey();
         this.registerOutput();
         this.registerResize();
-        
+
     }
 
     unregister() {
