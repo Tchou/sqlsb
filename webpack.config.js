@@ -9,6 +9,12 @@ module.exports = {
         path: __dirname + "/dist",
         filename: '[name].js'
     },
+    module: {
+        rules: [{
+            test: /sql-wasm-browser\.wasm$/,
+            type: 'asset/inline'
+        }]
+    },
     plugins: [
         new CopyPlugin({
             patterns: [

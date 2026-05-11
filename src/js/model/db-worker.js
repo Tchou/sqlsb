@@ -1,4 +1,5 @@
-import initSqlJs from 'sql.js/dist/sql-asm'
+import initSqlJs from 'sql.js/dist/sql-wasm-browser'
+import wasmDataUri from 'sql.js/dist/sql-wasm-browser.wasm';
 
 /**
  * @type {SQL.Database}
@@ -32,7 +33,7 @@ let pause = null;
 if (typeof globalThis.requestAnimationFrame == "function")
     pause = () => new Promise(globalThis.requestAnimationFrame);
 else
-    pause = () => new Promise((ok)=>setTimeout(ok,100));
+    pause = () => new Promise((ok) => setTimeout(ok, 100));
 
 async function runSQL(sql, noblock) {
 
@@ -55,60 +56,65 @@ async function runSQL(sql, noblock) {
     } catch (e) {
         results.push({
             success: false,
-            error: e.message,
+            error: e,
             sql: it.getRemainingSQL()
         });
     }
     return results;
 
 }
-initSqlJs().then(SQL => {
-    self.addEventListener("message", (ev) => {
-        const msg = ev.data;
-        switch (msg.type) {
-            case "INIT":
-                self.postMessage({ type: "INIT" });
-                break;
+let SQL = null;
+self.addEventListener("message", async (ev) => {
+    const msg = ev.data;
+    switch (msg.type) {
+        case "INIT":
+            while (SQL == null) {
+                await pause();
+            }
+            self.postMessage({ type: "INIT" });
+            break;
 
-            case "LOAD":
-                if (db != null) {
-                    db.close();
-                }
-                db = new SQL.Database(msg.data);
-                db.create_function("MOD", (x, y) => x % y);
-                self.postMessage({ type: "LOADED" });
-                break;
+        case "LOAD":
+            if (db != null) {
+                db.close();
+            }
+            db = new SQL.Database(msg.data);
+            db.create_function("MOD", (x, y) => x % y);
+            self.postMessage({ type: "LOADED" });
+            break;
 
-            case "EXECUTE":
-                running = true;
-                runSQL(msg.data).then((data) => {
-                    running = false;
-                    self.postMessage({ type: "RESULTS", data });
-                });
-                break;
-
-            case "TABLES":
-                running = true;
-                runSQL("SELECT name FROM sqlite_schema WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;", true)
-                    .then(res => {
-                        running = false;
-                        res = res[0];
-                        self.postMessage({ type: "TABLES", data: res.values });
-                    });
-                break;
-
-            case "EXPORT":
-                const array = db.export();
-                self.postMessage({ type: "EXPORT", data: array }, [array.buffer]);
-                break;
-
-            case "INTERRUPT":
+        case "EXECUTE":
+            running = true;
+            runSQL(msg.data).then((data) => {
                 running = false;
-                break;
+                self.postMessage({ type: "RESULTS", data });
+            });
+            break;
 
-            default:
+        case "TABLES":
+            running = true;
+            runSQL("SELECT name FROM sqlite_schema WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;")
+                .then(res => {
+                    running = false;
+                    res = res[0];
+                    self.postMessage({ type: "TABLES", data: res.values });
+                });
+            break;
 
-        }
+        case "EXPORT":
+            const array = db.export();
+            self.postMessage({ type: "EXPORT", data: array }, [array.buffer]);
+            break;
 
-    });
+        case "INTERRUPT":
+            running = false;
+            break;
+
+        default:
+
+    }
+
 });
+initSqlJs({
+    locateFile: () => wasmDataUri
+}).then(o => { SQL = o });
