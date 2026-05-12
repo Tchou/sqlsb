@@ -1,12 +1,12 @@
 {
   "name": "sqlsb",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Simple SQL Sandbox",
   "main": "index.js",
   "scripts": {
     "dist": "webpack --mode=production",
     "single": "npm run dist && node utils/pack_resources.mjs dist/index.html dist/sqlsb.html",
-    "release" : "npm run single && node utils/release.mjs",
+    "release": "npm run single && node utils/release.mjs",
     "build": "webpack --mode=development",
     "watch": "webpack --mode=development -w"
   },
