@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "dist": "webpack --mode=production",
-    "single": "webpack --mode=production && node utils/pack_resources.mjs dist/index.html dist/sqlsb.html",
+    "single": "npm run dist && node utils/pack_resources.mjs dist/index.html dist/sqlsb.html",
+    "release" : "npm run single && node utils/release.mjs",
     "build": "webpack --mode=development",
     "watch": "webpack --mode=development -w"
   },
