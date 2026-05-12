@@ -172,13 +172,6 @@ button.action-button[disabled] img {
     color: var(--color-primary);
 }
 
-/* */
-#toolbar-panel #save-session-button {
-    background-color: var(--color-important);
-    border-radius: 5pt;
-
-}
-
 #toolbar-panel #save-session-button.unsaved img {
     background-color: transparent;
     filter: hue-rotate(180deg);
@@ -189,7 +182,10 @@ button.action-button[disabled] img {
     filter: hue-rotate(180deg) var(--hl-filter);
 }
 
-#main-panel>#resize-panel {
+#main-panel>#center-resize-panel {
+    background-color: var(--color-primary);
+}
+#main>#left-resize-panel {
     background-color: var(--color-primary);
 }
 

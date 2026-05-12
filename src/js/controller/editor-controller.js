@@ -3,12 +3,14 @@ import 'ace-builds/src-noconflict/theme-vibrant_ink';
 import 'ace-builds/src-noconflict/theme-xcode';
 import 'ace-builds/src-noconflict/mode-pgsql';
 
-const TOOLBAR_PANEL_ID = "toolbar-panel"
-const PLAY_BUTTON_ID = "execute-button"
-const STOP_BUTTON_ID = "stop-button"
-const RESIZE_PANEL_ID = "resize-panel"
-const EDITOR_PANEL_ID = "editor-panel"
-const THEME_BUTTON_ID = "theme-button"
+const TOOLBAR_PANEL_ID = "toolbar-panel";
+const PLAY_BUTTON_ID = "execute-button";
+const STOP_BUTTON_ID = "stop-button";
+const CENTER_RESIZE_PANEL = "center-resize-panel";
+const LEFT_RESIZE_PANEL = "left-resize-panel";
+const EDITOR_PANEL_ID = "editor-panel";
+const MAIN_PANEL_ID = "main-panel";
+const THEME_BUTTON_ID = "theme-button";
 
 const THEME_LIGHT = "ace/theme/xcode";
 const THEME_DARK = "ace/theme/vibrant_ink";
@@ -53,8 +55,10 @@ export class EditorController {
         this.playButton = document.getElementById(PLAY_BUTTON_ID);
         this.stopButton = document.getElementById(STOP_BUTTON_ID);
         this.themeButton = document.getElementById(THEME_BUTTON_ID);
-        this.resizePanel = document.getElementById(RESIZE_PANEL_ID);
+        this.centerResizePanel = document.getElementById(CENTER_RESIZE_PANEL);
+        this.leftResizePanel = document.getElementById(LEFT_RESIZE_PANEL);
         this.editorPanel = document.getElementById(EDITOR_PANEL_ID);
+        this.mainPanel = document.getElementById(MAIN_PANEL_ID);
         this.colorScheme = document.documentElement;
         this.stopButton.disabled = true;
         this.toolBarHandler = null;
@@ -246,30 +250,42 @@ export class EditorController {
 
     registerResize() {
         if (this.resizeHandler == null) {
-            let initY = -1;
-            let initHeight = -1;
+            let initCoord = -1;
+            let initSize = -1;
+            let direction = 0; //1 vertical 2 horizontal
             this.resizeHandler = {}
             this.resizeHandler["mousedown"] = (e) => {
-                if (e.target != this.resizePanel) return;
-                initY = e.screenY;
-                initHeight = this.editorPanel.offsetHeight;
+                if (e.target == this.centerResizePanel) {
+                    initCoord = e.screenY;
+                    initSize = this.editorPanel.offsetHeight;
+                    direction = 1;
+                } else if (e.target == this.leftResizePanel) {
+                    initCoord = e.screenX;
+                    initSize = this.mainPanel.offsetWidth;
+                    direction = 2;
+                }
             };
             this.resizeHandler["mouseup"] = (e) => {
-                if (initY == -1) return;
-                initY = -1;
-                initHeight = -1;
+                initCoord = -1;
+                initSize = -1;
+                direction = 0;
             }
             this.resizeHandler["mousemove"] = (e) => {
-                if (initY == -1) return;
-                let delta = initY - e.screenY;
-                this.editorPanel.style.height = (initHeight - delta) + "px";
+                let delta;
+                if (direction == 1) {
+                    delta = initCoord - e.screenY;
+                    this.editorPanel.style.height = (initSize - delta) + "px";
+                } else if (direction == 2) {
+                    delta = e.screenX - initCoord;
+                    this.mainPanel.style.width = (initSize - delta) + "px";
+                }
             };
             for (let evname of Object.keys(this.resizeHandler)) {
                 document.addEventListener(evname, this.resizeHandler[evname]);
             }
         }
     }
-    unregisterResize() {
+    unregisterVResize() {
         if (this.resizeHandler != null) {
             for (let evname of Object.keys(this.resizeHandler)) {
                 document.removeEventListener(evname, this.resizeHandler[evname]);

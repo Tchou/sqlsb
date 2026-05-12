@@ -1,8 +1,12 @@
 :root {
     --disabled-filter: saturate(10%);
     --font-mono: monospace;
-    --left-panel-width: 20%;
-    --main-panel-width: calc(100% - var(--left-panel-width));
+    --main-panel-width: 80%;
+    --main-panel-max-width: 90%;
+    --main-panel-min-width: 60%;
+    --editor-height: 40vh;
+    --editor-max-height:70vh;
+    --editor-min-height:30vh;
     --table-border-width: 0.15em;
     --table-border-style: var(--table-border-width) var(--color-primary) solid;
 }
@@ -11,7 +15,6 @@ html.light {
     --color-primary: #008080;
     --color-secondary: white;
     --color-widget-bg: #e0e0e0;
-    --color-important: #fdb2a9;
     --button-filter: brightness(100%);
     --hl-filter: brightness(120%) contrast(110%);
 
@@ -21,7 +24,6 @@ html.dark {
     --color-primary: #96f5f5;
     --color-secondary: rgb(47, 45, 45);
     --color-widget-bg: #404040;
-    --color-important: #fdb2a9;
     --button-filter: brightness(150%);
     --hl-filter: brightness(160%) contrast(120%);
 }

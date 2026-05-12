@@ -42,6 +42,8 @@ a#github-banner:hover {
     padding: 0;
     margin: 0;
     overflow: hidden;
+    display:flex;
+    flex-direction: row;
 }
 #main,
 #main>div,
@@ -51,12 +53,9 @@ a#github-banner:hover {
 
 /* Left panel */
 #main>#left-panel {
-    position:absolute;
-    left:0;
-    top:0;
     height:100%;
-    width: var(--left-panel-width);
     display:flex;
+    flex:1;
     flex-direction: column;
 }
 
@@ -79,14 +78,25 @@ a#github-banner:hover {
     width: 100%;
     overflow:auto;
 }
+#main>#left-resize-panel {
+    height: 100%;
+    position:relative;
+    width: var(--table-border-width);
+}
+
+#main>#left-resize-panel:hover {
+    cursor: col-resize;
+}
 
 /* Main panel */
 #main-panel {
-    position:absolute;
+    position:relative;
     top:0;
     right:0;
     height:100%;
     width: var(--main-panel-width);
+    max-width: var(--main-panel-max-width);
+    min-width: var(--main-panel-min-width);
     display: flex;
     flex-direction: column;
 }
@@ -127,7 +137,9 @@ a#github-banner:hover {
 #main-panel>#editor-panel {
     position: relative;
     width:100%;
-    height:40vh;
+    height:var(--editor-height);
+    max-height:var(--editor-max-height);
+    min-height:var(--editor-min-height);
 }
 
 #main-panel>#editor-panel>#code-editor {
@@ -137,13 +149,13 @@ a#github-banner:hover {
     height: 100%;
 }
 
-#main-panel >#resize-panel {
+#main-panel >#center-resize-panel {
     position:relative;
     width:100%;
     height: var(--table-border-width);
 }
 
-#main-panel > #resize-panel:hover {
+#main-panel > #center-resize-panel:hover {
     cursor: row-resize;
 }
 
@@ -152,13 +164,14 @@ a#github-banner:hover {
     width: 100%;
     overflow-y: auto;
     overflow-x: hidden;
+    font-size: large;
 }
 
 /* Structure of SELECT TABLE in output view */
 
 div.sql-result {
     position:relative;
-    width: calc(var(--main-panel-width)* 0.75);
+    width: calc(var(--main-panel-width)* 0.90);
     max-height: 20em;
     overflow: auto;
     margin-left:auto;
@@ -200,10 +213,4 @@ div.sql-result table.table-body {
 
 #confirm-dialog-message {
     display:none;
-}
-
-.latex-code {
-    z-index:1000;
-    font-family: sans-serif;
-    white-space: pre;
 }
