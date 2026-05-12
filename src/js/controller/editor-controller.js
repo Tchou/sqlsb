@@ -1,4 +1,7 @@
 import { setLanguage } from "../lang";
+import { getOption, setOption } from "../config";
+
+import * as ace from 'ace-builds/src-noconflict/ace';
 import 'ace-builds/src-noconflict/theme-vibrant_ink';
 import 'ace-builds/src-noconflict/theme-xcode';
 import 'ace-builds/src-noconflict/mode-pgsql';
@@ -11,9 +14,13 @@ const LEFT_RESIZE_PANEL = "left-resize-panel";
 const EDITOR_PANEL_ID = "editor-panel";
 const MAIN_PANEL_ID = "main-panel";
 const THEME_BUTTON_ID = "theme-button";
+const EDITOR_ELEMENT_ID = "code-editor";
+
 
 const THEME_LIGHT = "ace/theme/xcode";
 const THEME_DARK = "ace/theme/vibrant_ink";
+
+const THEME_CONFIG_KEY = "sqlsb-theme";
 
 /**
  * @param {String} sql
@@ -43,11 +50,10 @@ function saveAs(name, type, content) {
 
 export class EditorController {
 
-    constructor(model, editor, tableListView, outputView) {
+    constructor(model, tableListView, outputView) {
         this.model = model
-        this.editor = editor;
-        editor.session.setMode('ace/mode/pgsql');
-        editor.setTheme(THEME_LIGHT);
+        this.editor = ace.edit(EDITOR_ELEMENT_ID);
+        this.editor.session.setMode('ace/mode/pgsql');
 
         this.tableListView = tableListView;
         this.outputView = outputView;
@@ -66,18 +72,36 @@ export class EditorController {
         this.outputClickHandler = null;
         this.resizeHandler = null;
         this.historyPosition = -1;
+        if (getOption("theme") == "dark") {
+            this.setTheme("dark");
+        } else {
+            this.setTheme("light");
+        }
+    }
+
+    setTheme(t) {
+        switch (t.toLocaleLowerCase()) {
+            case "light":
+                this.colorScheme.classList.remove("dark");
+                this.colorScheme.classList.add("light");
+                this.editor.setTheme(THEME_LIGHT);
+                setOption("theme","light");
+                break;
+            case "dark":
+                this.colorScheme.classList.remove("light");
+                this.colorScheme.classList.add("dark");
+                this.editor.setTheme(THEME_DARK);
+                setOption("theme","dark");
+                break
+        }
     }
 
     toggleTheme() {
         const isLight = this.colorScheme.classList.contains("light");
         if (isLight) {
-            this.colorScheme.classList.remove("light");
-            this.colorScheme.classList.add("dark");
-            this.editor.setTheme(THEME_DARK);
+            this.setTheme("dark")
         } else {
-            this.colorScheme.classList.remove("dark");
-            this.colorScheme.classList.add("light");
-            this.editor.setTheme(THEME_LIGHT);
+            this.setTheme("light")
         }
     }
 

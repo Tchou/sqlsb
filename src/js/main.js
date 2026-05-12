@@ -1,6 +1,5 @@
 
 "use strict";
-import * as ace from 'ace-builds/src-noconflict/ace';
 
 import { setLanguage } from './lang';
 import { DbModel } from './model/db-model';
@@ -15,8 +14,13 @@ import { TableListController } from './controller/table-list-controller'
 import { EditorController } from './controller/editor-controller'
 import { DbSelectorController } from './controller/db-selector-controller'
 
+import * as config from "./config"
+
+
 function init() {
-    const editor = ace.edit('code-editor');
+    let theme = config.getOption("theme");
+    if (theme != "dark") theme = "light";
+    document.documentElement.setAttribute("class", theme);
 
     const model = new DbModel(globalThis.workerUrl);
     const remoteExamples = RemoteExamples.getInstance();
@@ -30,7 +34,7 @@ function init() {
         const paramLang = (new URLSearchParams(window.location.search)).get("lang");
         setLanguage(paramLang);
         const tableListController = new TableListController(model, outputView,tableListView);
-        const editorController = new EditorController(model, editor, tableListView, outputView);
+        const editorController = new EditorController(model, tableListView, outputView);
         const dbSelectorController = new DbSelectorController(remoteExamples, dbSelectorView, editorController);
         tableListController.register();
         editorController.register();

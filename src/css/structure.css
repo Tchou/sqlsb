@@ -4,25 +4,27 @@ body {
 }
 
 #github-banner-container {
-    position:fixed;
-    bottom:0;
-    left:0;
-    
+    position: fixed;
+    bottom: 0;
+    left: 0;
+
 }
+
 a#github-banner {
     text-decoration: none;
     font-weight: bold;
-    width:10em;
+    width: 10em;
     text-align: center;
-    transform: translate(0,-7em) rotate(45deg);
+    transform: translate(0, -7em) rotate(45deg);
     transform-origin: bottom left;
-    
-    display:inline-block;
+
+    display: inline-block;
 }
 
 a#github-banner:hover {
     filter: var(--hl-filter);
 }
+
 /** main container
     divided in two parts (horizontal):
     - Left panel contains two elements (vertical) :
@@ -36,15 +38,16 @@ a#github-banner:hover {
 */
 
 #main {
-    position:relative;
+    position: relative;
     width: 100vw;
     height: 100vh;
     padding: 0;
     margin: 0;
     overflow: hidden;
-    display:flex;
+    display: flex;
     flex-direction: row;
 }
+
 #main,
 #main>div,
 #main>*>div {
@@ -53,9 +56,9 @@ a#github-banner:hover {
 
 /* Left panel */
 #main>#left-panel {
-    height:100%;
-    display:flex;
-    flex:1;
+    height: 100%;
+    display: flex;
+    flex: 1;
     flex-direction: column;
 }
 
@@ -66,21 +69,23 @@ a#github-banner:hover {
 }
 
 #main>#left-panel>#db-selector-panel>#db-selector {
-    width:100%;
+    width: 100%;
 
 }
-#main>#left-panel>#db-selector-panel>#db-selector > option {
+
+#main>#left-panel>#db-selector-panel>#db-selector>option {
     white-space: pre;
 }
 
 #main>#left-panel>#table-panel {
-    flex:1;
+    flex: 1;
     width: 100%;
-    overflow:auto;
+    overflow: auto;
 }
+
 #main>#left-resize-panel {
     height: 100%;
-    position:relative;
+    position: relative;
     width: var(--table-border-width);
 }
 
@@ -90,10 +95,10 @@ a#github-banner:hover {
 
 /* Main panel */
 #main-panel {
-    position:relative;
-    top:0;
-    right:0;
-    height:100%;
+    position: relative;
+    top: 0;
+    right: 0;
+    height: 100%;
     width: var(--main-panel-width);
     max-width: var(--main-panel-max-width);
     min-width: var(--main-panel-min-width);
@@ -136,10 +141,10 @@ a#github-banner:hover {
 
 #main-panel>#editor-panel {
     position: relative;
-    width:100%;
-    height:var(--editor-height);
-    max-height:var(--editor-max-height);
-    min-height:var(--editor-min-height);
+    width: 100%;
+    height: var(--editor-height);
+    max-height: var(--editor-max-height);
+    min-height: var(--editor-min-height);
 }
 
 #main-panel>#editor-panel>#code-editor {
@@ -149,13 +154,13 @@ a#github-banner:hover {
     height: 100%;
 }
 
-#main-panel >#center-resize-panel {
-    position:relative;
-    width:100%;
+#main-panel>#center-resize-panel {
+    position: relative;
+    width: 100%;
     height: var(--table-border-width);
 }
 
-#main-panel > #center-resize-panel:hover {
+#main-panel>#center-resize-panel:hover {
     cursor: row-resize;
 }
 
@@ -164,53 +169,54 @@ a#github-banner:hover {
     width: 100%;
     overflow-y: auto;
     overflow-x: hidden;
-    font-size: large;
 }
 
 /* Structure of SELECT TABLE in output view */
 
 div.sql-result {
-    position:relative;
+    position: relative;
     width: calc(var(--main-panel-width)* 0.90);
     max-height: 20em;
     overflow: auto;
-    margin-left:auto;
-    margin-right:auto;
-
+    margin-left: auto;
+    margin-right: auto;
+    padding-top:2em;
 }
 
 div.sql-result table {
-    width:100%;
+    width: 100%;
     table-layout: fixed;
 }
 
 div.sql-result table td {
     word-wrap: break-word;
 }
-div.sql-result table td:first-child, 
+
+div.sql-result table td:first-child,
 div.sql-result table th:first-child {
-    width:2.5em;
+    width: 2.5em;
 }
 
 div.sql-result table th {
-    overflow:hidden;
+    overflow: hidden;
     text-overflow: ellipsis;
 }
 
 div.sql-result table.table-head {
-    position:-webkit-sticky;
-    position:sticky;
-    top:0;
-    z-index:1;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
+
 div.sql-result table.table-body {
-    z-index:0;
+    z-index: 0;
 }
 
 #file-selector {
-    display:none;
+    display: none;
 }
 
 #confirm-dialog-message {
-    display:none;
+    display: none;
 }

@@ -1,8 +1,10 @@
 "use strict";
+import { getOption, setOption } from "./config";
+
 export const LANGUAGES = ["EN", "FR"]
 
 const STR = [
-    [[],{}],
+    [[], {}],
 
     [["#execute-button"], {
         "title": {
@@ -24,26 +26,26 @@ const STR = [
     }],
     [["#clear-editor-button"], {
         "title": {
-            "EN" : "Clear editor",
-            "FR" : "Effacer l'éditeur"
+            "EN": "Clear editor",
+            "FR": "Effacer l'éditeur"
         }
     }],
     [["#clear-output-button"], {
         "title": {
-            "EN" : "Clear output",
-            "FR" : "Effacer la sortie"
+            "EN": "Clear output",
+            "FR": "Effacer la sortie"
         }
     }],
     [["#theme-button"], {
         "title": {
-            "EN" : "Switch theme (Light/Dark)",
-            "FR" : "Changer de thème (Clair/Somber)"
+            "EN": "Switch theme (Light/Dark)",
+            "FR": "Changer de thème (Clair/Somber)"
         }
     }],
     [["#resize-panel"], {
-        "title" : {
-            "EN" : "Drag to resize",
-            "FR" : "Redimentionner"
+        "title": {
+            "EN": "Drag to resize",
+            "FR": "Redimentionner"
         }
     }],
     [["#page-title", "#title-tag"], {
@@ -71,9 +73,9 @@ const STR = [
         }
     }],
     [["#output-panel .sql-code"], {
-        "title" : {
-            "EN" : "Copy to editor [click]/Execute [Ctrl-click]",
-            "FR" : "Copier dans l'éditeur [click]/Exécuter [Ctrl-clik]"
+        "title": {
+            "EN": "Copy to editor [click]/Execute [Ctrl-click]",
+            "FR": "Copier dans l'éditeur [click]/Exécuter [Ctrl-clik]"
         }
     }],
     [[".table-count-link"], {
@@ -84,48 +86,48 @@ const STR = [
     }],
     [["#db-selector-text"], {
         "innerHTML": {
-            "EN" : "Choose a database…",
-            "FR" : "Choisir une base de données…"
+            "EN": "Choose a database…",
+            "FR": "Choisir une base de données…"
         }
     }],
     [["#db-selector-new"], {
         "innerHTML": {
-            "EN" : "&#x2B50; New database",
-            "FR" : "&#x2B50; Nouvelle base de données"
+            "EN": "&#x2B50; New database",
+            "FR": "&#x2B50; Nouvelle base de données"
         }
     }],
     [["#db-selector-from-db-file"], {
         "innerHTML": {
-            "EN" : "&#x1F4D9; load a SQLite Database",
-            "FR" : "&#x1F4D9; charger une base SQLite"
+            "EN": "&#x1F4D9; load a SQLite Database",
+            "FR": "&#x1F4D9; charger une base SQLite"
         }
     }],
     [["#db-selector-from-sql-file"], {
         "innerHTML": {
-            "EN" : "&#x1F4C4; load a SQL file",
-            "FR" : "&#x1F4C4; charger un fichier SQL"
+            "EN": "&#x1F4C4; load a SQL file",
+            "FR": "&#x1F4C4; charger un fichier SQL"
         }
     }],
     [["#db-selector-example-label"], {
         "innerHTML": {
-            "EN" : "Builtin examples…",
-            "FR" : "Exemples pré-définis…"
+            "EN": "Builtin examples…",
+            "FR": "Exemples pré-définis…"
         }
     }],
     [["#confirm-dialog-message"], {
         "innerHTML": {
-            "EN" : "Do you wish to clear the current editor?",
-            "FR" : "Voulez vous effacer l'éditeur ?"
+            "EN": "Do you wish to clear the current editor?",
+            "FR": "Voulez vous effacer l'éditeur ?"
         }
     }],
     [["#github-banner"], {
-        "innerHTML" : {
-            "EN" : "See on GitHub",
-            "FR" : "Voir sur GitHub"
+        "innerHTML": {
+            "EN": "See on GitHub",
+            "FR": "Voir sur GitHub"
         }
     }]
 ];
-let LANG = null;
+let BROWSER_DEFAULT_LANG = null;
 (function () {
     let ln = "EN";
     if (navigator.languages && navigator.languages.length) {
@@ -135,21 +137,22 @@ let LANG = null;
     }
     ln = ln.split("-")[0].toLocaleUpperCase();
     if (LANGUAGES.indexOf(ln) < 0) ln = "EN";
-    LANG = ln;
+    BROWSER_DEFAULT_LANG = ln;
 })();
 
 
 export function setLanguage(lang) {
+    if (typeof lang === "undefined" || lang === null)
+        lang = getOption("lang");
     if (typeof lang === "undefined" || lang === null) {
-        lang = LANG;
+        lang = BROWSER_DEFAULT_LANG;
     } else {
         lang = lang.toLocaleUpperCase();
         if (LANGUAGES.indexOf(lang) < 0) {
-            lang = LANG;
-        } else {
-            LANG = lang;
-        }
+            lang = BROWSER_DEFAULT_LANG;
+        };
     }
+    setOption("lang", lang);
     for (const [ids, msgs] of STR) {
         for (const id of ids) {
             for (const elem of document.querySelectorAll(id)) {
