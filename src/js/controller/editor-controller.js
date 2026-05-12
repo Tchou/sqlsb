@@ -1,10 +1,17 @@
 import { setLanguage } from "../lang";
+import 'ace-builds/src-noconflict/theme-vibrant_ink';
+import 'ace-builds/src-noconflict/theme-xcode';
+import 'ace-builds/src-noconflict/mode-pgsql';
 
 const TOOLBAR_PANEL_ID = "toolbar-panel"
 const PLAY_BUTTON_ID = "execute-button"
 const STOP_BUTTON_ID = "stop-button"
 const RESIZE_PANEL_ID = "resize-panel"
 const EDITOR_PANEL_ID = "editor-panel"
+const THEME_BUTTON_ID = "theme-button"
+
+const THEME_LIGHT = "ace/theme/xcode";
+const THEME_DARK = "ace/theme/vibrant_ink";
 
 /**
  * @param {String} sql
@@ -37,19 +44,37 @@ export class EditorController {
     constructor(model, editor, tableListView, outputView) {
         this.model = model
         this.editor = editor;
+        editor.session.setMode('ace/mode/pgsql');
+        editor.setTheme(THEME_LIGHT);
+
         this.tableListView = tableListView;
         this.outputView = outputView;
         this.toolBarDom = document.getElementById(TOOLBAR_PANEL_ID);
         this.playButton = document.getElementById(PLAY_BUTTON_ID);
         this.stopButton = document.getElementById(STOP_BUTTON_ID);
+        this.themeButton = document.getElementById(THEME_BUTTON_ID);
         this.resizePanel = document.getElementById(RESIZE_PANEL_ID);
         this.editorPanel = document.getElementById(EDITOR_PANEL_ID);
+        this.colorScheme = document.documentElement;
         this.stopButton.disabled = true;
         this.toolBarHandler = null;
         this.keyHandler = null;
         this.outputClickHandler = null;
         this.resizeHandler = null;
         this.historyPosition = -1;
+    }
+
+    toggleTheme() {
+        const isLight = this.colorScheme.classList.contains("light");
+        if (isLight) {
+            this.colorScheme.classList.remove("light");
+            this.colorScheme.classList.add("dark");
+            this.editor.setTheme(THEME_DARK);
+        } else {
+            this.colorScheme.classList.remove("dark");
+            this.colorScheme.classList.add("light");
+            this.editor.setTheme(THEME_LIGHT);
+        }
     }
 
     toggleButtons() {

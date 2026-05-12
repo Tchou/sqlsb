@@ -1,8 +1,7 @@
 
 "use strict";
 import * as ace from 'ace-builds/src-noconflict/ace';
-import 'ace-builds/src-noconflict/mode-pgsql';
-import 'ace-builds/src-noconflict/theme-xcode';
+
 import { setLanguage } from './lang';
 import { DbModel } from './model/db-model';
 import * as RemoteExamples from './model/remote-examples'
@@ -18,8 +17,6 @@ import { DbSelectorController } from './controller/db-selector-controller'
 
 function init() {
     const editor = ace.edit('code-editor');
-    editor.session.setMode('ace/mode/pgsql');
-    editor.setTheme('ace/theme/xcode');
 
     const model = new DbModel(globalThis.workerUrl);
     const remoteExamples = RemoteExamples.getInstance();

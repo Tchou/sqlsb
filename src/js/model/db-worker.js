@@ -44,6 +44,7 @@ async function runSQL(sql, noblock) {
         for (const stmt of it) {
             const res = executeStatement(stmt);
             results.push(res);
+            stmt.free();
             if (!res.success) break;
             if (!noblock && i++ % 5000 == 0) {
                 await pause();

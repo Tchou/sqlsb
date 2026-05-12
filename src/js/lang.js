@@ -34,6 +34,12 @@ const STR = [
             "FR" : "Effacer la sortie"
         }
     }],
+    [["#theme-button"], {
+        "title": {
+            "EN" : "Switch theme (Light/Dark)",
+            "FR" : "Changer de thème (Clair/Somber)"
+        }
+    }],
     [["#resize-panel"], {
         "title" : {
             "EN" : "Drag to resize",

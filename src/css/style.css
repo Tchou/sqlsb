@@ -1,5 +1,11 @@
 body {
     font-family: sans-serif;
+    color: var(--color-primary);
+    background-color: var(--color-secondary);
+}
+
+#page-title {
+    color: var(--color-primary);
 }
 
 a {
@@ -20,6 +26,8 @@ a:hover {
 .table-name {
     font-family: var(--font-mono);
     white-space: pre;
+    color: var(--color-primary);
+
 }
 
 .sql-result {
@@ -28,7 +36,7 @@ a:hover {
 
 #output-panel .sql-code:hover,
 #table-panel a:hover {
-    color: white;
+    color: var(--color-secondary);
     background: var(--color-primary);
     filter: var(--hl-filter);
 }
@@ -36,6 +44,7 @@ a:hover {
 #output-panel li {
     margin-bottom: 2em;
     list-style-position: inside;
+    color: var(--color-primary);
 }
 
 /*
@@ -54,16 +63,16 @@ SELECT OUTPUT FORMATING.
 
 div.sql-result table td:first-child,
 div.sql-result table th {
-    color: white;
+    color: var(--color-secondary);
     background-color: var(--color-primary);
 }
 
 div.sql-result table.table-head {
-    background: white;
+    background: var(--color-secondary);
 }
 
 div.sql-result table th:first-child {
-    background-color: white;
+    background-color: var(--color-secondary);
     border-style: none;
 }
 
@@ -102,13 +111,14 @@ span.sql-result::before {
     margin-right: 0.5em;
     border: 0 none black;
     background-color: transparent;
+    filter: var(--button-filter);
 }
 
 #db-selector,
 #toolbar-panel input,
 .action-button img {
     border: 1pt solid var(--color-primary);
-    border-radius: 5pt;
+    border-radius: 2pt;
     color: var(--color-primary);
     background-color: var(--color-widget-bg);
 }
@@ -177,4 +187,13 @@ button.action-button[disabled] img {
 
 #toolbar-panel #save-session-button.unsaved img:hover {
     filter: hue-rotate(180deg) var(--hl-filter);
+}
+
+#main-panel>#resize-panel {
+    background-color: var(--color-primary);
+}
+
+a#github-banner {
+    background-color: var(--color-primary);
+    color: var(--color-secondary);
 }
