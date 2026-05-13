@@ -27,7 +27,7 @@ async function checkInit(o) {
     const scriptP = await o.workerP;
     const code = await scriptP.text();
     const blob = new Blob([code]);
-    o.worker = new Worker (URL.createObjectURL(blob));
+    o.worker = new Worker(URL.createObjectURL(blob));
     const msg = await postMessageAsync(o.worker, { type: "INIT" });
     assertMessage("INIT", msg);
     o.initialized = true;
@@ -76,9 +76,9 @@ export class DbModel {
         return res;
     }
 
-    async interrupt(){
+    async interrupt() {
         await checkInit(this);
-        this.worker.postMessage({ type : "INTERRUPT" });
+        this.worker.postMessage({ type: "INTERRUPT" });
         //assertMessage("INTERRUPTED", msg);
     }
 
@@ -100,7 +100,6 @@ export class DbModel {
             data: "SELECT total_changes();"
         })
         assertMessage("RESULTS", mod);
-        console.log(mod);
         if (mod.data[0].success) {
             let updates = mod.data[0].values[0];
             if (updates != this.totalUpdates) {
