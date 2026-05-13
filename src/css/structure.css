@@ -213,10 +213,6 @@ div.sql-result table.table-body {
     z-index: 0;
 }
 
-#file-selector {
-    display: none;
-}
-
-#confirm-dialog-message {
+.hidden {
     display: none;
 }

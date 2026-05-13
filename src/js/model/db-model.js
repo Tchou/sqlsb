@@ -44,7 +44,10 @@ export class DbModel {
         }
         this.workerP = customFetch(url);
         this.worker = null;
+        this.numTables = -1;
+        this.totalUpdates = 0;
         this.__history = [];
+        this.dirty = false;
     }
 
     async load(data) {
@@ -53,6 +56,9 @@ export class DbModel {
             type: "LOAD",
             data
         });
+        this.numTables = -1;
+        this.totalUpdates = 0;
+        this.dirty = false;
         assertMessage("LOADED", msg);
     }
 
@@ -64,6 +70,9 @@ export class DbModel {
         assertMessage("TABLES", msg);
         let res = [];
         if (Array.isArray(msg.data)) res = msg.data;
+        if (this.numTables >= 0 && res.length != this.numTables)
+            this.dirty = true;
+        this.numTables = res.length;
         return res;
     }
 
@@ -83,6 +92,20 @@ export class DbModel {
         for (const res of msg.data) {
             if (res.success) {
                 this.__history.push(res.sql);
+            }
+        }
+
+        let mod = await postMessageAsync(this.worker, {
+            type: "EXECUTE",
+            data: "SELECT total_changes();"
+        })
+        assertMessage("RESULTS", mod);
+        console.log(mod);
+        if (mod.data[0].success) {
+            let updates = mod.data[0].values[0];
+            if (updates != this.totalUpdates) {
+                this.dirty = true;
+                this.totalUpdates = updates;
             }
         }
         return msg.data;

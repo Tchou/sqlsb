@@ -120,6 +120,12 @@ const STR = [
             "FR": "Voulez vous effacer l'éditeur ?"
         }
     }],
+    [["#confirm-load-message"], {
+        "innerHTML": {
+            "EN": "The current database is modified, do you want to proceed (all changes will be lost) ?",
+            "FR": "La base de données actuelle est modifiée, voulez vous continuer (toutes les modifications seront perdues) ?"
+        }
+    }],
     [["#github-banner"], {
         "innerHTML": {
             "EN": "See on GitHub",

@@ -21,23 +21,25 @@
             </div>
             <div id="toolbar-panel">
                 <h1 id="page-title">@</h1>
-                <button class="action-button" id='execute-button' data-action="executeAction"
-                title="@"><img src='img/play.svg' alt=''/></button><!--
-                --><button class="action-button" id='stop-button' data-action="stopAction"
-                title="@"><img src='img/stop.svg' alt=''/></button><!--
-                --><button class="action-button" id='export-db-button' data-action="exportDbAction"
-                title="@"><img src='img/dldb2.svg' alt=''/></button><!--
+                <button class="action-button" id='execute-button' data-action="executeAction" title="@"><img
+                        src='img/play.svg' alt='' /></button><!--
+                --><button class="action-button" id='stop-button' data-action="stopAction" title="@"><img
+                        src='img/stop.svg' alt='' /></button><!--
+                --><button class="action-button" id='export-db-button' data-action="exportDbAction" title="@"><img
+                        src='img/dldb2.svg' alt='' /></button><!--
                 --><button class="action-button" id='export-history-button' data-action="exportHistoryAction"
-                 title="@"><img src='img/dlsql2.svg' alt=''/></button><!--
+                    title="@"><img src='img/dlsql2.svg' alt='' /></button><!--
                 --><button class="action-button" id='clear-editor-button' data-action="clearEditorAction"
-                title="@"><img src='img/bin.svg' alt=''/></button><!--
+                    title="@"><img src='img/bin.svg' alt='' /></button><!--
                 --><span class="filler"> </span><!--
-                --><button class="action-button" id='theme-button' data-action="toggleTheme"
-                title="@"><img src='img/theme.svg' alt=''/></button><!--
-                --><a data-action="setLanguageAction" data-arg="EN" class='lang-link' href="javascript:;" title="Switch to English">EN</a><span>/</span><!--
-                --><a data-action="setLanguageAction" data-arg="FR" class='lang-link' href="javascript:;" title="Basculer en Français">FR</a><!--
+                --><button class="action-button" id='theme-button' data-action="toggleTheme" title="@"><img
+                        src='img/theme.svg' alt='' /></button><!--
+                --><a data-action="setLanguageAction" data-arg="EN" class='lang-link' href="javascript:;"
+                    title="Switch to English">EN</a><span>/</span><!--
+                --><a data-action="setLanguageAction" data-arg="FR" class='lang-link' href="javascript:;"
+                    title="Basculer en Français">FR</a><!--
                 -->
-                </div>
+            </div>
             <div id="editor-panel">
                 <div id="code-editor"></div>
             </div>
@@ -48,16 +50,20 @@
             </div>
         </div>
     </div>
-    <div id="confirm-dialog-message"></div>
-    <input type="file" id="file-selector"></input>
+    <div class="hidden">
+        <div id="confirm-dialog-message"></div>
+        <div id="confirm-load-message"></div>
+        <input type="file" id="file-selector"></input>
+    </div>
 </body>
 <script>
-if (typeof globalThis == "undefined")
+    if (typeof globalThis == "undefined")
         globalThis = window;
-globalThis.dbUrl = "db/";
-globalThis.workerUrl = "./";
+    globalThis.dbUrl = "db/";
+    globalThis.workerUrl = "./";
 </script>
 <script>/* INLINE 'db/index.json' */</script>
 <script>/* INLINE 'db-worker.js' */</script>
 <script src="./main.js"></script>
+
 </html>

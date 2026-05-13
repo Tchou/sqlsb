@@ -1,22 +1,26 @@
+const CONFIRM_ELEMENT_ID = "confirm-load-message";
+const FILE_SELECTOR_ID = "file-selector";
+
 export class DbSelectorController {
-    constructor(remoteExamples, dbSelectorView, editorController) {
+    constructor(remoteExamples, model, dbSelectorView, editorController) {
         this.dbSelectorView = dbSelectorView;
         this.remoteExamples = remoteExamples;
         this.editorController = editorController;
+        this.model = model;
         this.dbSelectorViewCallback = null;
     }
 
     loadFile(kind) {
         const that = this;
         return new Promise((resolve, reject) => {
-            const fs = document.getElementById("file-selector");
+            const fs = document.getElementById(FILE_SELECTOR_ID);
             fs.addEventListener("change", function cb(ev) {
                 const fileList = ev.target.files;
                 if (fileList.length >= 1) {
                     const file = fileList.item(0);
                     if (kind == "/DB/") {
                         file.arrayBuffer().then(buf =>
-                            that.editorController.model.load(new Uint8Array(buf))
+                            that.model.load(new Uint8Array(buf))
                                 .then(() => {
                                     fs.removeEventListener("change", cb);
                                     resolve();
@@ -41,7 +45,7 @@ export class DbSelectorController {
 
     async resetView() {
         await this.editorController.updateTables();
-        this.editorController.model.clearHistory();
+        this.model.clearHistory();
         this.editorController.outputView.clear();
     }
     async loadFileAction(kind) {
@@ -52,7 +56,7 @@ export class DbSelectorController {
 
     async loadNewAction() {
         this.editorController.editor.getSession().setValue("");
-        await this.editorController.model.load(new Uint8Array());
+        await this.model.load(new Uint8Array());
         await this.resetView();
         this.dbSelectorView.resetEntry();
     }
@@ -61,7 +65,7 @@ export class DbSelectorController {
         for (let [file, _, sql, db] of this.remoteExamples.entries) {
             if (file == id) {
                 this.editorController.editor.getSession().setValue(sql);
-                await this.editorController.model.load(new Uint8Array(db));
+                await this.model.load(new Uint8Array(db));
                 await this.resetView();
                 this.dbSelectorView.resetEntry();
                 break;
@@ -69,6 +73,7 @@ export class DbSelectorController {
         }
     }
     register() {
+        const that = this;
         if (!this.dbSelectorViewCallback) {
             const select = this.dbSelectorView.select;
             select.addEventListener("change",
@@ -76,7 +81,11 @@ export class DbSelectorController {
                     let opt = select.options[select.selectedIndex];
                     if (!opt) return;
                     if (opt.dataset.action) {
-                        this[opt.dataset.action](opt.value);
+                        if (!that.model.dirty ||
+                            window.confirm(document.getElementById(CONFIRM_ELEMENT_ID).innerHTML)
+                        ) {
+                            this[opt.dataset.action](opt.value);
+                        }
                     }
 
                 })

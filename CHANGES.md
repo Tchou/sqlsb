@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+ - UI tweaks
+ - Save language and theme settings in localStorage
+
 ## [0.4.0] - 2026-05-12
 
  - Do proper releases on Github
