@@ -19,5 +19,3 @@
  - (deployed only) switch to WASM version of SQL.js (fixes call stack limit on
    Firefox)
  - (deployed only) fix a race when the worker is slow to start
-
-
