@@ -2,7 +2,7 @@ const DOM_ID = "db-selector-panel";
 
 
 let instance = null;
-const BUILTIN_ENTRIES = [{
+const BUILTIN_ENTRIES: DbSelectorBuiltinEntry[] = [{
     id: "db-selector-text", selected: "true", disabled: "disabled"
 },
 { id: "db-selector-new", value: "/NEW/", "data-action": "loadNewAction" },
@@ -11,8 +11,19 @@ const BUILTIN_ENTRIES = [{
 { id: "db-selector-example-label", disabled: "disabled" },
 ];
 
-class DbSelectorView {
-    constructor() {
+export class DbSelectorView {
+
+    dom: Node
+    entries: (string | DbSelectorEntry)[]
+    builtins: { [key: string]: boolean }
+    select: HTMLSelectElement
+
+    private static instance: DbSelectorView;
+    static getInstance(): DbSelectorView {
+        return this.instance ??= new this();
+    }
+
+    private constructor() {
         this.dom = document.getElementById(DOM_ID);
         if (this.dom == null) throw new Error(`{missing element '#${DOM_ID}}'`)
         this.entries = [];
@@ -37,24 +48,25 @@ class DbSelectorView {
         this.select = select;
     }
 
-    resetEntry() {
-        document.getElementById("db-selector-text").selected = true;
+    resetEntry(): void {
+        (document.getElementById("db-selector-text") as HTMLOptionElement).selected = true;
     }
-    setEntries(entries) {
+
+    setEntries(entries: (string | DbSelectorEntry)[]): void {
         this.entries = entries;
         this.render();
     }
 
-    selectByName(n) {
+    selectByName(n: string): void {
         for (let opt of this.select.options) {
             if (opt.textContent == n) {
-                opt.selected = "selected";
+                opt.selected = true;
                 break;
             }
         }
     }
 
-    render() {
+    render(): void {
         for (let opt of this.select.options) {
             if (this.builtins[opt.id]) continue;
             this.select.removeChild(opt);
@@ -73,13 +85,6 @@ class DbSelectorView {
 
         }
 
-
     }
 
-}
-export function getInstance() {
-    if (instance == null) {
-        instance = new DbSelectorView();
-    }
-    return instance;
 }

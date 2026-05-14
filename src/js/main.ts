@@ -3,12 +3,12 @@
 
 import { setLanguage } from './lang';
 import { DbModel } from './model/db-model';
-import * as RemoteExamples from './model/remote-examples'
+import { RemoteExamples } from './model/remote-examples'
 
 
-import * as TableListView from './vue/table-list-view'
-import * as OutputView from './vue/output-view'
-import * as DbSelectorView from './vue/db-selector-view'
+import { TableListView } from './view/table-list-view'
+import { OutputView } from './view/output-view'
+import { DbSelectorView } from './view/db-selector-view'
 
 import { TableListController } from './controller/table-list-controller'
 import { EditorController } from './controller/editor-controller'
@@ -33,7 +33,7 @@ function init() {
         const outputView = OutputView.getInstance();
         const paramLang = (new URLSearchParams(window.location.search)).get("lang");
         setLanguage(paramLang);
-        const tableListController = new TableListController(model, outputView,tableListView);
+        const tableListController = new TableListController(model, outputView, tableListView);
         const editorController = new EditorController(model, tableListView, outputView);
         const dbSelectorController = new DbSelectorController(remoteExamples, model, dbSelectorView, editorController);
         tableListController.register();

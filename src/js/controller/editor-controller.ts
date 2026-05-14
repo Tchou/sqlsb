@@ -6,6 +6,11 @@ import 'ace-builds/src-noconflict/theme-vibrant_ink';
 import 'ace-builds/src-noconflict/theme-xcode';
 import 'ace-builds/src-noconflict/mode-pgsql';
 
+import { DbModel } from "../model/db-model";
+
+import { TableListView } from "../view/table-list-view";
+import { OutputView } from "../view/output-view";
+
 const TOOLBAR_PANEL_ID = "toolbar-panel";
 const PLAY_BUTTON_ID = "execute-button";
 const STOP_BUTTON_ID = "stop-button";
@@ -20,18 +25,13 @@ const EDITOR_ELEMENT_ID = "code-editor";
 const THEME_LIGHT = "ace/theme/xcode";
 const THEME_DARK = "ace/theme/vibrant_ink";
 
-const THEME_CONFIG_KEY = "sqlsb-theme";
-
-/**
- * @param {String} sql
- */
-function appendSemi(sql) {
+function appendSemi(sql: string): string {
     if (sql.match(/;\s*(--.*)?$/) != null) return sql;
     return sql + "\n;";
 }
 
 
-function saveAs(name, type, content) {
+function saveAs(name: string, type, content: BlobPart): void {
     const a = document.createElement("a");
     a.style.display = 'none';
     const url = window.URL.createObjectURL(new Blob([content], { type }))
@@ -46,25 +46,50 @@ function saveAs(name, type, content) {
         window.URL.revokeObjectURL(url)
     }, 0)
 }
-
+function getButton(id: string): HTMLButtonElement {
+    return document.getElementById(id) as HTMLButtonElement;
+}
+function getDiv(id: string): HTMLDivElement {
+    return document.getElementById(id) as HTMLDivElement;
+}
 
 export class EditorController {
 
-    constructor(model, tableListView, outputView) {
+    editor: ace;
+    model: DbModel;
+    tableListView: TableListView;
+    outputView: OutputView;
+    toolBarDom: HTMLDivElement;
+    playButton: HTMLButtonElement;
+    stopButton: HTMLButtonElement;
+    themeButton: HTMLButtonElement;
+    centerResizePanel: HTMLDivElement;
+    leftResizePanel: HTMLDivElement;
+    editorPanel: HTMLDivElement;
+    mainPanel: HTMLDivElement;
+    colorScheme: HTMLElement;
+    toolBarHandler: (this: HTMLDivElement, ev: Event) => any;
+    keyHandler: (this: HTMLDivElement, ev: Event) => any;
+    outputClickHandler: (this: HTMLDivElement, ev: Event) => any;
+    resizeHandler: { [key: string]: (this: HTMLDivElement, ev: MouseEvent) => any };
+    historyPosition = -1;
+
+
+    constructor(model, tableListView, outputView: OutputView) {
         this.model = model
         this.editor = ace.edit(EDITOR_ELEMENT_ID);
         this.editor.session.setMode('ace/mode/pgsql');
 
         this.tableListView = tableListView;
         this.outputView = outputView;
-        this.toolBarDom = document.getElementById(TOOLBAR_PANEL_ID);
-        this.playButton = document.getElementById(PLAY_BUTTON_ID);
-        this.stopButton = document.getElementById(STOP_BUTTON_ID);
-        this.themeButton = document.getElementById(THEME_BUTTON_ID);
-        this.centerResizePanel = document.getElementById(CENTER_RESIZE_PANEL);
-        this.leftResizePanel = document.getElementById(LEFT_RESIZE_PANEL);
-        this.editorPanel = document.getElementById(EDITOR_PANEL_ID);
-        this.mainPanel = document.getElementById(MAIN_PANEL_ID);
+        this.toolBarDom = getDiv(TOOLBAR_PANEL_ID);
+        this.playButton = getButton(PLAY_BUTTON_ID);
+        this.stopButton = getButton(STOP_BUTTON_ID);
+        this.themeButton = getButton(THEME_BUTTON_ID);
+        this.centerResizePanel = getDiv(CENTER_RESIZE_PANEL);
+        this.leftResizePanel = getDiv(LEFT_RESIZE_PANEL);
+        this.editorPanel = getDiv(EDITOR_PANEL_ID);
+        this.mainPanel = getDiv(MAIN_PANEL_ID);
         this.colorScheme = document.documentElement;
         this.stopButton.disabled = true;
         this.toolBarHandler = null;
@@ -79,24 +104,24 @@ export class EditorController {
         }
     }
 
-    setTheme(t) {
+    setTheme(t: "light" | "dark"): void {
         switch (t.toLocaleLowerCase()) {
             case "light":
                 this.colorScheme.classList.remove("dark");
                 this.colorScheme.classList.add("light");
                 this.editor.setTheme(THEME_LIGHT);
-                setOption("theme","light");
+                setOption("theme", "light");
                 break;
             case "dark":
                 this.colorScheme.classList.remove("light");
                 this.colorScheme.classList.add("dark");
                 this.editor.setTheme(THEME_DARK);
-                setOption("theme","dark");
+                setOption("theme", "dark");
                 break
         }
     }
 
-    toggleTheme() {
+    toggleTheme(): void {
         const isLight = this.colorScheme.classList.contains("light");
         if (isLight) {
             this.setTheme("dark")
@@ -105,19 +130,21 @@ export class EditorController {
         }
     }
 
-    toggleButtons() {
+    toggleButtons(): void {
         this.stopButton.disabled = !this.stopButton.disabled;
         this.playButton.disabled = !this.stopButton.disabled;
     }
-    async updateTables() {
+    async updateTables(): Promise<void> {
         const tables = await this.model.tables();
         this.tableListView.setTables(tables);
         setLanguage();
     }
-    stopAction() {
+
+    stopAction(): void {
         this.model.interrupt();
     }
-    async executeAction() {
+
+    async executeAction(): Promise<void> {
         this.toggleButtons();
         this.historyPosition = -1;
         const session = this.editor.getSession();
@@ -139,7 +166,8 @@ export class EditorController {
         }
         this.editor.focus();
     }
-    async clearEditorAction() {
+
+    async clearEditorAction(): Promise<void> {
         const session = this.editor.getSession();
         if (session.getValue().trim().length > 0) {
             if (!window.confirm(document.getElementById("confirm-dialog-message").innerHTML)) return;
@@ -149,21 +177,21 @@ export class EditorController {
         this.editor.focus();
     }
 
-    async clearOutputAction() {
+    async clearOutputAction(): Promise<void> {
         this.outputView.clear();
     }
 
 
-    setLanguageAction(lang) {
+    setLanguageAction(lang?: string): void {
         setLanguage(lang);
     }
 
-    async exportDbAction() {
+    async exportDbAction(): Promise<void> {
         const data = await this.model.export();
         saveAs("sqlite.db", "application/x-sqlite3", data);
     }
 
-    exportHistoryAction() {
+    exportHistoryAction(): void {
         let sql = "";
         for (const s of this.model.history) {
             sql += appendSemi(s) + "\n";
@@ -171,11 +199,12 @@ export class EditorController {
         saveAs("code.sql", "application/sql", sql);
     }
 
-    registerToolbar() {
+    registerToolbar(): void {
         if (this.toolBarHandler != null) return;
         this.toolBarDom.addEventListener("click", this.toolBarHandler =
             (ev) => {
-                for (const elem of [ev.target, ev.target.parentNode]) {
+                const target = ev.target as HTMLDivElement;
+                for (const elem of [target, target.parentNode as HTMLElement]) {
                     if ('action' in elem.dataset) {
                         this[elem.dataset.action](elem.dataset.arg);
                         break;
@@ -184,13 +213,13 @@ export class EditorController {
             });
     }
 
-    unregisterToolBar() {
+    unregisterToolBar(): void {
         if (this.toolBarHandler == null) return;
         this.toolBarDom.removeEventListener("click", this.toolBarHandler);
         this.toolBarHandler = null;
     }
 
-    navigateHistory(dir) {
+    navigateHistory(dir: 1 | -1) {
         const history = Array.from(this.model.history);
         if (history.length == 0) return;
         const session = this.editor.getSession();
@@ -216,7 +245,7 @@ export class EditorController {
 
     registerKey() {
         if (this.keyHandler != null) return;
-        window.document.body.addEventListener("keydown", this.keyHandler = (ev) => {
+        window.document.body.addEventListener("keydown", this.keyHandler = (ev: KeyboardEvent) => {
             if (ev.key == "Enter" && ev.shiftKey) {
                 this.executeAction();
                 ev.preventDefault();
@@ -243,16 +272,17 @@ export class EditorController {
     registerOutput() {
         if (this.outputClickHandler == null) {
             this.outputView.dom.addEventListener("click", this.outputClickHandler =
-                (ev) => {
-                    if (ev.target.classList.contains('sql-code')) {
+                (ev: MouseEvent) => {
+                    const target = ev.target as HTMLElement;
+                    if (target.classList.contains('sql-code')) {
                         const session = this.editor.getSession();
-                        session.setValue(ev.target.innerText);
+                        session.setValue(target.innerText);
                         if (ev.ctrlKey) {
                             this.executeAction();
                         }
                     }
                     else {
-                        for (const elem of [ev.target, ev.target.parentNode]) {
+                        for (const elem of [target, target.parentNode as HTMLElement]) {
                             if ('action' in elem.dataset) {
                                 this[elem.dataset.action](elem.dataset.arg);
                                 break;
@@ -265,9 +295,9 @@ export class EditorController {
         }
     }
 
-    unregisterOutput() {
+    unregisterOutput(): void {
         if (this.outputClickHandler != null) {
-            this.outputView.dom.removeEventListener("click", this.outputHandler);
+            this.outputView.dom.removeEventListener("click", this.outputClickHandler);
         }
 
     }
@@ -309,7 +339,7 @@ export class EditorController {
             }
         }
     }
-    unregisterVResize() {
+    unregisterResize() {
         if (this.resizeHandler != null) {
             for (let evname of Object.keys(this.resizeHandler)) {
                 document.removeEventListener(evname, this.resizeHandler[evname]);

@@ -1,20 +1,29 @@
-const DOM_ID = "table-panel";
+const DOM_ID: string = "table-panel";
 
 
-let instance = null;
+export class TableListView {
 
-class TableListView {
+    private static instance: TableListView;
+    static getInstance(): TableListView {
+        return this.instance ??= new this();
+    }
+
+
+    private tables: string[];
+    dom: HTMLDivElement;
 
     constructor() {
         this.tables = [];
-        this.dom = document.getElementById(DOM_ID);
+        this.dom = document.getElementById(DOM_ID) as HTMLDivElement;
         if (this.dom == null) throw new Error(`{missing element '#${DOM_ID}}'`)
     }
-    setTables(tables) {
+
+    setTables(tables: string[]): void {
         this.tables = tables;
         this.render();
     }
-    render() {
+
+    render(): void {
         const ul = document.createElement("ul");
         this.dom.innerHTML = "";
         this.dom.appendChild(ul);
@@ -39,11 +48,4 @@ class TableListView {
 
         }
     }
-}
-
-export function getInstance() {
-    if (instance == null) {
-        instance = new TableListView();
-    }
-    return instance;
 }

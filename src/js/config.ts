@@ -5,7 +5,7 @@ export function setOption(k, v) {
     }
 }
 
-export function getOption(k, v) {
+export function getOption(k) {
     if (globalThis.localStorage) {
         return globalThis.localStorage.getItem("sqlsb-" + k);
     }

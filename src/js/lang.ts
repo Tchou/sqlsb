@@ -3,7 +3,7 @@ import { getOption, setOption } from "./config";
 
 export const LANGUAGES = ["EN", "FR"]
 
-const STR = [
+const STR: ([string[], Object])[] = [
     [[], {}],
 
     [["#execute-button"], {
@@ -147,7 +147,7 @@ let BROWSER_DEFAULT_LANG = null;
 })();
 
 
-export function setLanguage(lang) {
+export function setLanguage(lang?: string) {
     if (typeof lang === "undefined" || lang === null)
         lang = getOption("lang");
     if (typeof lang === "undefined" || lang === null) {

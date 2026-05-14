@@ -1,8 +1,20 @@
+import { DbModel } from "../model/db-model";
+import { RemoteExamples } from "../model/remote-examples";
+import { DbSelectorView } from "../view/db-selector-view"
+import { EditorController } from "./editor-controller";
+
 const CONFIRM_ELEMENT_ID = "confirm-load-message";
 const FILE_SELECTOR_ID = "file-selector";
 
 export class DbSelectorController {
-    constructor(remoteExamples, model, dbSelectorView, editorController) {
+
+    dbSelectorView: DbSelectorView;
+    remoteExamples: RemoteExamples;
+    editorController: EditorController;
+    model: DbModel;
+    dbSelectorViewCallback: (this: HTMLSelectElement, Event) => any = null;
+
+    constructor(remoteExamples: RemoteExamples, model: DbModel, dbSelectorView: DbSelectorView, editorController: EditorController) {
         this.dbSelectorView = dbSelectorView;
         this.remoteExamples = remoteExamples;
         this.editorController = editorController;
@@ -15,7 +27,7 @@ export class DbSelectorController {
         return new Promise((resolve, reject) => {
             const fs = document.getElementById(FILE_SELECTOR_ID);
             fs.addEventListener("change", function cb(ev) {
-                const fileList = ev.target.files;
+                const fileList = (ev.target as HTMLInputElement).files;
                 if (fileList.length >= 1) {
                     const file = fileList.item(0);
                     if (kind == "/DB/") {
@@ -23,18 +35,18 @@ export class DbSelectorController {
                             that.model.load(new Uint8Array(buf))
                                 .then(() => {
                                     fs.removeEventListener("change", cb);
-                                    resolve();
+                                    resolve(null);
                                 }));
                     } else {
                         file.text().then(txt => {
                             that.editorController.editor.getSession().setValue(txt);
                             fs.removeEventListener("change", cb);
-                            resolve();
+                            resolve(null);
                         });
                     }
                 } else {
                     fs.removeEventListener("change", cb);
-                    resolve();
+                    resolve(null);
                 }
 
             });
@@ -61,8 +73,10 @@ export class DbSelectorController {
         this.dbSelectorView.resetEntry();
     }
 
-    async loadExampleAction(id) {
-        for (let [file, _, sql, db] of this.remoteExamples.entries) {
+    async loadExampleAction(id: string) {
+        for (const entry of this.remoteExamples.entries) {
+            if (typeof entry == "string") continue;
+            const [file, _, sql, db] = entry;
             if (file == id) {
                 this.editorController.editor.getSession().setValue(sql);
                 await this.model.load(new Uint8Array(db));

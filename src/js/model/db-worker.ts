@@ -1,22 +1,18 @@
-import initSqlJs from 'sql.js/dist/sql-wasm-browser'
+import initSqlJs, { Database, Statement } from 'sql.js'
 import wasmDataUri from 'sql.js/dist/sql-wasm-browser.wasm';
 
-/**
- * @type {SQL.Database}
- */
-let db = null;
-let running = false;
-/**
- * @param {SQL.StatementIterator } it
- * @param {SQL.Statement} stmt
-*/
-function executeStatement(stmt) {
+const thisWorker: Worker = self as any as Worker;
+
+let db: Database = null;
+let running: boolean = false;
+
+function executeStatement(stmt: Statement): OkResult {
 
     const sql = stmt.getSQL();
     let next = stmt.step();
     let schema = stmt.getColumnNames();
     let values = [];
-    while (next) {
+    while (next) {  
         values.push(stmt.get());
         next = stmt.step();
     }
@@ -29,13 +25,13 @@ function executeStatement(stmt) {
     };
 
 }
-let pause = null;
+let pause: () => Promise<number>;
 if (typeof globalThis.requestAnimationFrame == "function")
-    pause = () => new Promise(globalThis.requestAnimationFrame);
+    pause = () => new Promise((n) => globalThis.requestAnimationFrame(n));
 else
     pause = () => new Promise((ok) => setTimeout(ok, 100));
 
-async function runSQL(sql, noblock) {
+async function runSQL(sql: string, noblock?: boolean): Promise<Array<Result>> {
 
     const it = db.iterateStatements(sql);
     const results = [];
@@ -49,9 +45,8 @@ async function runSQL(sql, noblock) {
             if (!noblock && i++ % 5000 == 0) {
                 await pause();
                 if (!running) {
-                    throw { message: "#INTERRUPT#" }
+                    throw "#INTERRUPT#";
                 }
-
             }
         }
     } catch (e) {
@@ -65,14 +60,14 @@ async function runSQL(sql, noblock) {
 
 }
 let SQL = null;
-self.addEventListener("message", async (ev) => {
-    const msg = ev.data;
+thisWorker.addEventListener("message", async (ev) => {
+    const msg: Message = ev.data;
     switch (msg.type) {
         case "INIT":
             while (SQL == null) {
                 await pause();
             }
-            self.postMessage({ type: "INIT" });
+            thisWorker.postMessage({ type: "INIT" });
             break;
 
         case "LOAD":
@@ -81,30 +76,31 @@ self.addEventListener("message", async (ev) => {
             }
             db = new SQL.Database(msg.data);
             db.create_function("MOD", (x, y) => x % y);
-            self.postMessage({ type: "LOADED" });
+            thisWorker.postMessage({ type: "LOADED" });
             break;
 
         case "EXECUTE":
             running = true;
             runSQL(msg.data).then((data) => {
                 running = false;
-                self.postMessage({ type: "RESULTS", data });
+                thisWorker.postMessage({ type: "RESULTS", data });
             });
             break;
 
-        case "TABLES":
+        case "GET-TABLES":
             running = true;
             runSQL("SELECT name FROM sqlite_schema WHERE type='table' AND name NOT LIKE 'sqlite_%' ORDER BY name;")
                 .then(res => {
                     running = false;
-                    res = res[0];
-                    self.postMessage({ type: "TABLES", data: res.values });
+                    const r0 = res[0];
+                    if (!r0.success) throw "Error running builtin query"
+                    thisWorker.postMessage({ type: "TABLES", data: r0.values });
                 });
             break;
 
         case "EXPORT":
             const array = db.export();
-            self.postMessage({ type: "EXPORT", data: array }, [array.buffer]);
+            thisWorker.postMessage({ type: "EXPORTED", data: array }, [array.buffer]);
             break;
 
         case "INTERRUPT":

@@ -175,12 +175,12 @@ a#github-banner:hover {
 
 div.sql-result {
     position: relative;
-    width: calc(var(--main-panel-width)* 0.90);
+    width: calc(var(--main-panel-width) * 0.90);
     max-height: 20em;
     overflow: auto;
     margin-left: auto;
     margin-right: auto;
-    padding-top:2em;
+    margin-top: 2em;
 }
 
 div.sql-result table {

@@ -1,8 +1,16 @@
 import { setLanguage } from "../lang";
+import { DbModel } from "../model/db-model";
+import { OutputView } from "../view/output-view";
+import { TableListView } from "../view/table-list-view";
 
 const DOM_ID = "table-panel";
 
 export class TableListController {
+    model: DbModel;
+    outputView: OutputView;
+    tableListView: TableListView;
+    dom: HTMLDivElement;
+    callback: (this: HTMLDivElement, MouseEvent) => any;
 
     constructor(model, outputView, tableListView) {
 
@@ -10,7 +18,7 @@ export class TableListController {
         this.model = model;
         this.outputView = outputView;
         this.tableListView = tableListView;
-        this.dom = document.getElementById(DOM_ID);
+        this.dom = document.getElementById(DOM_ID) as HTMLDivElement;
         if (this.dom == null) throw new Error(`{missing element '#${DOM_ID}}'`)
 
     }
@@ -56,7 +64,7 @@ export class TableListController {
 
     }
     unregister() {
-        if (!this.callbcak) return;
+        if (!this.callback) return;
         this.dom.removeEventListener("click", this.callback);
         this.callback = null;
     }
