@@ -1,4 +1,4 @@
-import { customFetch } from './local_fetch'
+import { customFetch } from './local-fetch'
 
 async function fromURL(id: number, dbfile: string, sqlfile: string, label: string, baseURL: String):
     Promise<DbSelectorEntry | null> {
@@ -13,6 +13,7 @@ async function fromURL(id: number, dbfile: string, sqlfile: string, label: strin
         return Promise.resolve(null);
     }
 }
+
 
 export class RemoteExamples {
 

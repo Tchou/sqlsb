@@ -12,7 +12,7 @@ function executeStatement(stmt: Statement): OkResult {
     let next = stmt.step();
     let schema = stmt.getColumnNames();
     let values = [];
-    while (next) {  
+    while (next) {
         values.push(stmt.get());
         next = stmt.step();
     }
@@ -60,14 +60,17 @@ async function runSQL(sql: string, noblock?: boolean): Promise<Array<Result>> {
 
 }
 let SQL = null;
+function sendMessage(m: ResponseMessage, transfer?): void {
+    thisWorker.postMessage(m, transfer)
+}
 thisWorker.addEventListener("message", async (ev) => {
-    const msg: Message = ev.data;
+    const msg: QueryMessage = ev.data;
     switch (msg.type) {
         case "INIT":
             while (SQL == null) {
                 await pause();
             }
-            thisWorker.postMessage({ type: "INIT" });
+            sendMessage({ type: "INITIALIZED" });
             break;
 
         case "LOAD":
@@ -76,14 +79,14 @@ thisWorker.addEventListener("message", async (ev) => {
             }
             db = new SQL.Database(msg.data);
             db.create_function("MOD", (x, y) => x % y);
-            thisWorker.postMessage({ type: "LOADED" });
+            sendMessage({ type: "LOADED" });
             break;
 
         case "EXECUTE":
             running = true;
             runSQL(msg.data).then((data) => {
                 running = false;
-                thisWorker.postMessage({ type: "RESULTS", data });
+                sendMessage({ type: "RESULTS", data });
             });
             break;
 
@@ -94,13 +97,13 @@ thisWorker.addEventListener("message", async (ev) => {
                     running = false;
                     const r0 = res[0];
                     if (!r0.success) throw "Error running builtin query"
-                    thisWorker.postMessage({ type: "TABLES", data: r0.values });
+                    sendMessage({ type: "TABLES", data: r0.values });
                 });
             break;
 
         case "EXPORT":
             const array = db.export();
-            thisWorker.postMessage({ type: "EXPORTED", data: array }, [array.buffer]);
+            sendMessage({ type: "EXPORTED", data: array as Uint8Array<ArrayBuffer> }, [array.buffer]);
             break;
 
         case "INTERRUPT":

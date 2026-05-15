@@ -1,8 +1,8 @@
-import { customFetch } from "./local_fetch";
+import { customFetch } from "./local-fetch";
 
 const DB_WORKER_SCRIPT = 'db-worker.js';
 
-function postMessageAsync(worker: Worker, msg: Message): Promise<Message> {
+function postMessageAsync(worker: Worker, msg: QueryMessage): Promise<ResponseMessage> {
     return new Promise((resolve, reject) => {
         worker.addEventListener("message", function handler(ev) {
             resolve(ev.data);
@@ -15,23 +15,24 @@ function postMessageAsync(worker: Worker, msg: Message): Promise<Message> {
     });
 
 }
-async function checkMessage(exp: "INIT", p: Promise<Message>): Promise<InitMessage>
-async function checkMessage(exp: "LOAD", p: Promise<Message>): Promise<LoadMessage>
-async function checkMessage(exp: "LOADED", p: Promise<Message>): Promise<LoadedMessage>
-async function checkMessage(exp: "TABLES", p: Promise<Message>): Promise<TablesMessage>
-async function checkMessage(exp: "EXECUTE", p: Promise<Message>): Promise<ExecuteMessage>
-async function checkMessage(exp: "RESULTS", p: Promise<Message>): Promise<ResultsMessage>
-async function checkMessage(exp: "GET-TABLES", p: Promise<Message>): Promise<GetTablesMessage>
-async function checkMessage(exp: "INTERRUPT", p: Promise<Message>): Promise<InterruptMessage>
-async function checkMessage(exp: "EXPORT", p: Promise<Message>): Promise<ExportMessage>
-async function checkMessage(exp: "EXPORTED", p: Promise<Message>): Promise<ExportedMessage>
-
-async function checkMessage(exp, p): Promise<Message> | never {
-    const msg = await p;
-    if (msg.type != exp)
-        throw new Error(`Internal error: expected ${exp} but received ${msg.type} from worker`);
-    return msg;
+async function sendMessage(w: Worker, p: QueryInit): Promise<ResponseInitialized>
+async function sendMessage(w: Worker, p: QueryLoad): Promise<ResponseLoaded>
+async function sendMessage(w: Worker, p: QueryGetTables): Promise<ResponseTables>
+async function sendMessage(w: Worker, p: QueryExecute): Promise<ResponseResults>
+async function sendMessage(w: Worker, p: QueryExport): Promise<ResponseExported>
+async function sendMessage(w: Worker, p: QueryInterrupt): Promise<ResponseResults>
+async function sendMessage(w: Worker, p) {
+    const r = await postMessageAsync(w, p);
+    if (p.type == "INIT" && r.type == "INITIALIZED" ||
+        p.type == "LOAD" && r.type == "LOADED" ||
+        p.type == "GET-TABLES" && r.type == "TABLES" ||
+        p.type == "EXECUTE" && r.type == "RESULTS" ||
+        p.type == "EXPORT" && r.type == "EXPORTED" ||
+        p.type == "INTERRUPT" && r.type == "RESULTS"
+    ) return r;
+    throw `Incompatible query ${p.type} and response ${r.type}`
 }
+
 
 async function checkInit(o: DbModel): Promise<void> {
     if (o.initialized == true) return;
@@ -39,7 +40,7 @@ async function checkInit(o: DbModel): Promise<void> {
     const code = await scriptP.text();
     const blob = new Blob([code]);
     o.worker = new Worker(URL.createObjectURL(blob));
-    await checkMessage("INIT", postMessageAsync(o.worker, { type: "INIT" }));
+    await sendMessage(o.worker, { type: "INIT" });
     o.initialized = true;
 }
 
@@ -69,11 +70,10 @@ export class DbModel {
 
     async load(data?: Uint8Array<ArrayBuffer>): Promise<void> {
         await checkInit(this);
-        await checkMessage("LOADED",
-            postMessageAsync(this.worker, {
-                type: "LOAD",
-                data
-            }));
+        await sendMessage(this.worker, {
+            type: "LOAD",
+            data
+        });
         this.numTables = -1;
         this.totalUpdates = 0;
         this.dirty = false;
@@ -81,9 +81,9 @@ export class DbModel {
 
     async tables(): Promise<any[]> {
         await checkInit(this);
-        const msg = await checkMessage("TABLES", postMessageAsync(this.worker, {
+        const msg = await sendMessage(this.worker, {
             type: "GET-TABLES"
-        }));
+        });
         let res = [];
         if (Array.isArray(msg.data)) res = msg.data;
         if (this.numTables >= 0 && res.length != this.numTables)
@@ -94,26 +94,25 @@ export class DbModel {
 
     async interrupt(): Promise<void> {
         await checkInit(this);
-        await postMessageAsync(this.worker, { type: "INTERRUPT" });
-        //assertMessage("INTERRUPTED", msg);
+        await sendMessage(this.worker, { type: "INTERRUPT" });
     }
 
     async evalSQL(sql: string) {
         await checkInit(this);
-        const msg = await checkMessage("RESULTS", postMessageAsync(this.worker, {
+        const msg = await sendMessage(this.worker, {
             type: "EXECUTE",
             data: sql
-        }));
+        });
         for (const res of msg.data) {
             if (res.success) {
                 this.__history.push(res.sql);
             }
         }
 
-        let mod = await checkMessage("RESULTS", postMessageAsync(this.worker, {
+        let mod = await sendMessage(this.worker, {
             type: "EXECUTE",
             data: "SELECT total_changes();"
-        }));
+        });
         if (mod.data[0].success) {
             let updates: number = mod.data[0].values[0][0];
             if (updates != this.totalUpdates) {
@@ -126,9 +125,9 @@ export class DbModel {
 
     async export() {
         await checkInit(this);
-        let msg = await checkMessage("EXPORTED", postMessageAsync(this.worker, {
+        let msg = await sendMessage(this.worker, {
             type: "EXPORT"
-        }));
+        });
         return msg.data;
     }
 

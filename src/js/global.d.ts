@@ -1,29 +1,21 @@
-type InitMessage = { type: "INIT" }
-type LoadMessage = { type: "LOAD", data: Uint8Array<ArrayBuffer> }
-type LoadedMessage = { type: "LOADED" }
-type TablesMessage = { type: "TABLES", data: import('sql.js').SqlValue[][] }
-type ExecuteMessage = { type: "EXECUTE", data: string }
-type ResultsMessage = { type: "RESULTS", data: Result[] }
-type GetTablesMessage = { type: "GET-TABLES" }
-type InterruptMessage = { type: "INTERRUPT" }
-type ExportMessage = { type: "EXPORT" }
-type ExportedMessage = { type: "EXPORTED", data: Uint8Array<ArrayBuffer> }
+type QueryInit = { type: "INIT" }
+type QueryLoad = { type: "LOAD", data: Uint8Array<ArrayBuffer> }
+type QueryGetTables = { type: "GET-TABLES" }
+type QueryExecute = { type: "EXECUTE", data: string }
+type QueryExport = { type: "EXPORT" }
+type QueryInterrupt = { type: "INTERRUPT" }
 
+type QueryMessage = QueryInit | QueryLoad | QueryGetTables | QueryExecute | QueryExport | QueryInterrupt
 
-type Message = InitMessage
-    | LoadMessage
-    | LoadedMessage
-    | TablesMessage
-    | ExecuteMessage
-    | ResultsMessage
-    | GetTablesMessage
-    | InterruptMessage
-    | ExportMessage
-    | ExportedMessage
+type ResponseInitialized = { type: "INITIALIZED" }
+type ResponseLoaded = { type: "LOADED" }
+type ResponseTables = { type: "TABLES", data: import('sql.js').SqlValue[][] }
+type ResponseResults = { type: "RESULTS", data: Result[] }
+type ResponseExported = { type: "EXPORTED", data: Uint8Array<ArrayBuffer> }
 
+type ResponseMessage = ResponseInitialized | ResponseLoaded | ResponseTables | ResponseResults | ResponseExported
 
-type MessageType = Message["type"]
-
+type Message = QueryMessage | ResponseMessage
 
 type OkResult = {
     success: true,

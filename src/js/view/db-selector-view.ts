@@ -13,7 +13,7 @@ const BUILTIN_ENTRIES: DbSelectorBuiltinEntry[] = [{
 
 export class DbSelectorView {
 
-    dom: Node
+    private dom: Node
     entries: (string | DbSelectorEntry)[]
     builtins: { [key: string]: boolean }
     select: HTMLSelectElement

@@ -10,7 +10,7 @@ export class TableListView {
 
 
     private tables: string[];
-    dom: HTMLDivElement;
+    private dom: HTMLDivElement;
 
     constructor() {
         this.tables = [];
@@ -23,7 +23,7 @@ export class TableListView {
         this.render();
     }
 
-    render(): void {
+    private render(): void {
         const ul = document.createElement("ul");
         this.dom.innerHTML = "";
         this.dom.appendChild(ul);
